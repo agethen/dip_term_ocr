@@ -1,12 +1,11 @@
-#include "Bitmap.hh"
+#include "../include/Bitmap.hh"
+#include "../include/viewer.hh"
 
-#include <GL/glut.h>
 #include <iostream>
 #include <cmath>
+
 cBitmap * bitmap;
 
-void draw();
-void myKeyboard( unsigned char, int, int );
 void exhaustiveConvexHull();
 void convexHull();
 int count;
@@ -27,15 +26,19 @@ int main( int argc, char ** argv ){
 
  bitmap->saveBitmap( outputfile );
 
- /* Viewer */
- glutInit( &argc, argv );
- glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA );
- glutInitWindowSize( 800,800 );
- glutInitWindowPosition( 400, 400 );
- glutCreateWindow("Raw Image Display");
- glutDisplayFunc(draw);
- glutKeyboardFunc(myKeyboard);
- glutMainLoop();
+
+
+ /* OpenGL Viewer Related */
+ int size = (bitmap->getWidth())*(bitmap->getHeight())*sizeof(struct Pixel);
+
+ unsigned char * buffer = (unsigned char *) malloc( size );
+ if( buffer == NULL ){ fprintf( stderr, "Could not allocate memory\n" ); return 1; }
+ 
+ bitmap->getBitmap( buffer, size );
+
+ glutViewer( buffer, bitmap->getWidth(), bitmap->getHeight(), argc, argv );
+
+ free(buffer);
 
  return 0;
 }
@@ -186,57 +189,4 @@ count++;
 }
 
 
-
-
-
-/* Viewer Related Stuff */
-void myKeyboard(unsigned char key, int x, int y){
- switch(key){
-   case 27:
-    exit(0);
- };
-}
-
-void draw( ){
-  int size = (bitmap->getWidth())*(bitmap->getHeight())*sizeof(struct Pixel);
-
-  unsigned char * buffer = (unsigned char *) malloc( size );
-  if( buffer == NULL ){ fprintf( stderr, "Could not allocate memory\n" ); return; }
-
-  bitmap->getBitmap( buffer, size );
-
-  glClear(GL_COLOR_BUFFER_BIT);
- 
-  glEnable( GL_TEXTURE_RECTANGLE_ARB );
-
-  GLuint texture;
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
-
-  glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, bitmap->getWidth(), bitmap->getHeight(),
-               0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
- 
-  glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER,	//Use GL_NEAREST here to avoid interpolation (instead of GL_LINEAR)
-                  GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER,
-                  GL_NEAREST);
- 
-  glBegin(GL_QUADS);
-  glTexCoord2i(0, bitmap->getHeight());
-  glVertex2f(-1, -1);
-  glTexCoord2i(bitmap->getWidth(), bitmap->getHeight());
-  glVertex2f(1, -1);
-  glTexCoord2i(bitmap->getWidth(), 0);
-  glVertex2f(1, 1);
-  glTexCoord2i(0, 0);
-  glVertex2f(-1, 1);
-  glEnd();
- 
-  glDeleteTextures(1, &texture);
- 
-  glFlush();
-  glutSwapBuffers();
-
-  free(buffer);
-}
 

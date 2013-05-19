@@ -1,9 +1,19 @@
 #include "Bitmap.hh"
 #include <iostream>
 
-cBitmap::cBitmap(){}
+cBitmap::cBitmap(){
+ bmap = NULL;
+ width = 0;
+ height = 0;
+ bpp = 0;
+}
 
 cBitmap::cBitmap( char * filename ){
+ bmap = NULL;
+ width = 0;
+ height = 0;
+ bpp = 0;
+
  loadBitmap( filename );
 }
 
@@ -36,6 +46,11 @@ int cBitmap::loadBitmap( char * filename ){
  assert( dibsize == 40 );
 
  file.read( buffer, dibsize-4 );
+
+ width = 0;
+ height = 0;
+ bpp = 0;
+
  memcpy( &width, buffer, 4 );
  memcpy( &height, buffer+4, 4 );
  memcpy( &bpp, buffer+10, 2 );
