@@ -16,6 +16,10 @@ char outputfile[16];
 int main( int argc, char ** argv ){
 
  bitmap = new cBitmap( argv[1] );
+
+ if( bitmap->getWidth()+bitmap->getHeight() > 1024 )
+  cout << "Warning: This bitmap seems to be big. Press Ctrl+C to quit if necessary." << endl;
+
  //exhaustiveConvexHull( );
  convexHull();
 
@@ -110,11 +114,12 @@ void convexHull(){
  mark.g = 128;
  mark.b = 128;
 
-count = 0;
+  count = 0;
  //Get min-max dimensions first
+
  for( int i = 0; i < bitmap->getWidth(); i++ ){
   for( int j = 0; j < bitmap->getHeight(); j++ ){
-count++;
+   count++;
    bitmap->getPixel( i, j, p );
    if( p.r < 255 ){
     if( i < min[0] ) min[0] = i;
@@ -208,8 +213,8 @@ void draw( ){
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_RECTANGLE_ARB, texture);
 
-  glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGB, bitmap->getWidth(), bitmap->getHeight(),
-               0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+  glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, GL_RGBA, bitmap->getWidth(), bitmap->getHeight(),
+               0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
  
   glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER,	//Use GL_NEAREST here to avoid interpolation (instead of GL_LINEAR)
                   GL_NEAREST);

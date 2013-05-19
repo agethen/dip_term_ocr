@@ -17,6 +17,8 @@ int cBitmap::loadBitmap( char * filename ){
  int cBitmapoffset = 0;
  int dibsize = 0;
 
+ int paddingbytes = 0;
+
  file.open( filename, fstream::in|fstream::binary|fstream::ate );
 
  if( file == NULL ){
@@ -28,42 +30,62 @@ int cBitmap::loadBitmap( char * filename ){
 
  file.read( buffer, 14 ); //Read cBitmap header
  memcpy( &cBitmapoffset, buffer+10, 4 );
+
  file.read( buffer, 4 );
  memcpy( &dibsize, buffer, 4 );
  assert( dibsize == 40 );
+
  file.read( buffer, dibsize-4 );
  memcpy( &width, buffer, 4 );
  memcpy( &height, buffer+4, 4 );
  memcpy( &bpp, buffer+10, 2 );
  assert( bpp == 24 || bpp == 32 );
 
+ paddingbytes = (4-(3*width)%4);
+
+ int sizeimg = 0;
+ memcpy( &sizeimg, buffer+16, sizeof(int) );				//Size of row in bytes must be 0 modulo 4 -> padding if necessary
+ assert( sizeimg-width*height*3 == paddingbytes*height );
+
  bpp /= 8;
  
  file.seekg( cBitmapoffset, file.beg );
 
- bmap = (Pixel *) malloc( width*height*bpp );
+ bmap = (Pixel *) malloc( width*height*sizeof(struct Pixel) );
+ memset( bmap, 0, width*height*sizeof(struct Pixel) );
 
  if( !bmap ){ fprintf( stderr, "Could not allocate memory\n" ); return -1; }
 
  int xpos = 0;
  int ypos = height-1;
 
- while( !file.eof() ){
-  file.read( buffer, bpp );
 
+ while( !file.eof() ){
+
+  if( ypos < 0 )
+   break;
+ 
+  file.read( buffer, bpp );
 
   if( !file && !file.eof() ){ fprintf( stderr, "An error occured when reading from file\n" ); return -1; }
 
-  memcpy( &(bmap[ypos*width+xpos]), buffer, 3 ); 	//We read bpp bytes, but only use the first 3 bytes (->in case of 32 bit skip alpha value)
+  bmap[ypos*width+xpos].r = buffer[2];
+  bmap[ypos*width+xpos].g = buffer[1];
+  bmap[ypos*width+xpos].b = buffer[0];
 
-  char t = bmap[ypos*width+xpos].r;			//Format in bitmap is BGRA, we need RGB though
-  bmap[ypos*width+xpos].r = bmap[ypos*width+xpos].b;
-  bmap[ypos*width+xpos].b = t;
+  if( bpp == 4 )
+   bmap[ypos*width+xpos].a = buffer[3];
+  else
+   bmap[ypos*width+xpos].a = 0;
 
   xpos = (xpos+1)%width;
 
-  if( xpos == 0 )
+  if( xpos == 0 ){
    ypos--;
+
+   if( paddingbytes )
+    file.read( buffer, paddingbytes );
+  }
  }
 
  file.close();
@@ -94,7 +116,7 @@ int cBitmap::saveBitmap( char * filename ){
  memcpy( dibheader+2*sizeof(int), &height, sizeof(int) );
  short planes = 1;
  memcpy( dibheader+3*sizeof(int), &planes, sizeof(short) );
- short bbp = 3*8; //Store in 24bbp format, even though 8 bit only supported
+ short bbp = 3*8; //Store in 24bbp format
  memcpy( dibheader+3*sizeof(int)+sizeof(short), &bbp, sizeof(short) );
  int compression = 0;
  memcpy( dibheader+3*sizeof(int)+2*sizeof(short), &compression, sizeof(int) );
@@ -107,6 +129,9 @@ int cBitmap::saveBitmap( char * filename ){
  memcpy( dibheader+7*sizeof(int)+2*sizeof(short), &palette, sizeof(int) );
  int important = 0;
  memcpy( dibheader+8*sizeof(int)+2*sizeof(short), &important, sizeof(int) );
+
+ int paddingbytes = 4-((width*3)%4);
+ char padding[3] = { 0, 0, 0 };
 
  fstream output;
  output.open( filename, fstream::out|fstream::binary );
@@ -122,11 +147,15 @@ int cBitmap::saveBitmap( char * filename ){
 
  for( int i = height-1; i >= 0; i-- ){
   for( int j = 0; j < width; j++ ){
-   char buffer[3];
-   memcpy( buffer, &(bmap[i*width+j]), 3 );
+   char buffer[4];
 
-   output.write( buffer, 3 );
+   memcpy( buffer, &(bmap[i*width+j]), sizeof(struct Pixel) );
+
+   output.write( buffer+2, 1 );
+   output.write( buffer+1, 1 );
+   output.write( buffer, 1 );  
   }
+  output.write( padding, paddingbytes );
  }
  output.close();
 
@@ -135,10 +164,13 @@ return 0;
  
  
 int cBitmap::getPixel( int x, int y, Pixel & p ){
- if( x < 0 || x >= width || y < 0 || y >= height ) return -1; 
+ if( x < 0 || x >= width || y < 0 || y >= height ) return -1;
+
  p.r = (bmap[y*width+x]).r;
  p.g = (bmap[y*width+x]).g;
  p.b = (bmap[y*width+x]).b;
+ p.a = (bmap[y*width+x]).a;
+
  return 0;
 }
 
@@ -149,7 +181,6 @@ int cBitmap::setPixel( int x, int y, Pixel p ){
 }
 
 void cBitmap::getBitmap( unsigned char * buffer, int max ){
-
  int size = width*height*sizeof(struct Pixel);
 
  if( size > max )
