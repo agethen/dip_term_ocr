@@ -7,8 +7,10 @@
 /* @h: Height of image */
 /* @argc: Pass argc of main( .. ) here. Needed for glut stuff */
 /* @argv: Pass argv of main( .. ) here. Needed for glut stuff */
+/* @windowsize_x: Viewer Window size in x dimension (width) */
+/* @windowsize_y: Viewer Window size in y dimension (height) */
 /* Notes: Expected format of buffer is RGBA. */
-void glutViewer( unsigned char * b, int w, int h, int argc, char ** argv );
+void glutViewer( unsigned char * b, int w, int h, int argc, char ** argv, int windowsize_x, int windowsize_y );
 
 /* Keyboard function. Used by glutViewer(..) */
 void myKeyboard(unsigned char key, int x, int y);

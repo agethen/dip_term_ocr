@@ -29,7 +29,7 @@ int main( int argc, char ** argv ){
  findSegments( bitmap, results );
 
  if( !results.empty() )
-  bitmap = results[1].bmap;
+  bitmap = results[0].bmap;	//Just as an example, switch the viewer to the first recognized character here. (Viewer always displays pointer bitmap)
 
 
  cout << results.size() << " Characters segmented" << endl;
@@ -42,7 +42,7 @@ int main( int argc, char ** argv ){
  
  bitmap->getBitmap( buffer, size );
 
- glutViewer( buffer, bitmap->getWidth(), bitmap->getHeight(), argc, argv );
+ glutViewer( buffer, bitmap->getWidth(), bitmap->getHeight(), argc, argv, 800, 800 );
 
  free(buffer);
 

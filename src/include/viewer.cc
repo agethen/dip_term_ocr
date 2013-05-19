@@ -5,7 +5,7 @@ unsigned char * buffer;
 int width;
 int height;
 
-void glutViewer( unsigned char * b, int w, int h, int argc, char ** argv ){
+void glutViewer( unsigned char * b, int w, int h, int argc, char ** argv, int windowsize_x, int windowsize_y ){
  buffer = b;
  width = w;
  height = h;
@@ -14,7 +14,7 @@ void glutViewer( unsigned char * b, int w, int h, int argc, char ** argv ){
  /* Viewer */
  glutInit( &argc, argv );
  glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGBA );
- glutInitWindowSize( 800,800 );
+ glutInitWindowSize( windowsize_x,windowsize_y );
  glutInitWindowPosition( 400, 400 );
  glutCreateWindow("Raw Image Display");
  glutDisplayFunc(draw);

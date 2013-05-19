@@ -36,7 +36,7 @@ int main( int argc, char ** argv ){
  
  bitmap->getBitmap( buffer, size );
 
- glutViewer( buffer, bitmap->getWidth(), bitmap->getHeight(), argc, argv );
+ glutViewer( buffer, bitmap->getWidth(), bitmap->getHeight(), argc, argv, 800, 800 );
 
  free(buffer);
 

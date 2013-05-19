@@ -28,6 +28,7 @@ int cBitmap::loadBitmap( char * filename ){
  int dibsize = 0;
 
  int paddingbytes = 0;
+ int flagNegHeight = 0;
 
  file.open( filename, fstream::in|fstream::binary|fstream::ate );
 
@@ -53,16 +54,16 @@ int cBitmap::loadBitmap( char * filename ){
 
  memcpy( &width, buffer, 4 );
  memcpy( &height, buffer+4, 4 );
+if( height < 0 ){ height *= -1; flagNegHeight = 1; }
  memcpy( &bpp, buffer+10, 2 );
  assert( bpp == 24 || bpp == 32 );
-
- paddingbytes = (4-(3*width)%4)%4;
+ bpp /= 8;
+ 
+ paddingbytes = (4-(bpp*width)%4)%4;
 
  int sizeimg = 0;
  memcpy( &sizeimg, buffer+16, sizeof(int) );				//Size of row in bytes must be 0 modulo 4 -> padding if necessary
- assert( sizeimg-width*height*3 == paddingbytes*height );
-
- bpp /= 8;
+ //assert( sizeimg-width*height*3 == paddingbytes*height );		//Apparently not set by all programs
  
  file.seekg( cBitmapoffset, file.beg );
 
@@ -74,10 +75,12 @@ int cBitmap::loadBitmap( char * filename ){
  int xpos = 0;
  int ypos = height-1;
 
+ if( flagNegHeight )
+  ypos = 0;
 
  while( !file.eof() ){
 
-  if( ypos < 0 )
+  if( ypos < 0 || ypos >= height )
    break;
  
   file.read( buffer, bpp );
@@ -96,7 +99,10 @@ int cBitmap::loadBitmap( char * filename ){
   xpos = (xpos+1)%width;
 
   if( xpos == 0 ){
-   ypos--;
+   if( flagNegHeight )
+    ypos++;
+   else
+    ypos--;
 
    if( paddingbytes )
     file.read( buffer, paddingbytes );
