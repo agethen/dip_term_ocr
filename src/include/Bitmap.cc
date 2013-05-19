@@ -56,7 +56,7 @@ int cBitmap::loadBitmap( char * filename ){
  memcpy( &bpp, buffer+10, 2 );
  assert( bpp == 24 || bpp == 32 );
 
- paddingbytes = (4-(3*width)%4);
+ paddingbytes = (4-(3*width)%4)%4;
 
  int sizeimg = 0;
  memcpy( &sizeimg, buffer+16, sizeof(int) );				//Size of row in bytes must be 0 modulo 4 -> padding if necessary
@@ -145,7 +145,7 @@ int cBitmap::saveBitmap( char * filename ){
  int important = 0;
  memcpy( dibheader+8*sizeof(int)+2*sizeof(short), &important, sizeof(int) );
 
- int paddingbytes = 4-((width*3)%4);
+ int paddingbytes = (4-((width*3)%4))%4;
  char padding[3] = { 0, 0, 0 };
 
  fstream output;
@@ -170,7 +170,8 @@ int cBitmap::saveBitmap( char * filename ){
    output.write( buffer+1, 1 );
    output.write( buffer, 1 );  
   }
-  output.write( padding, paddingbytes );
+  if( paddingbytes )
+   output.write( padding, paddingbytes );
  }
  output.close();
 
@@ -204,13 +205,23 @@ void cBitmap::getBitmap( unsigned char * buffer, int max ){
   memcpy( buffer, bmap, size );
 }
 
+void cBitmap::getRangeOfBitmap( unsigned char * buffer, int maxsize, int min_x, int max_x, int min_y, int max_y ){
+ int poff = 0;
+
+ for( int i = min_y; i <= max_y; i++ ){
+  memcpy( buffer+poff, bmap+i*width+min_x, sizeof( struct Pixel )*(max_x-min_x+1) );	//Copy 4*(max_x - min_x) bytes from each row
+  poff += sizeof( struct Pixel )*(max_x-min_x+1);
+  if( poff > maxsize ) return;
+ }
+}
+
 void cBitmap::setBitmap( unsigned char * bmp, int w, int h, int b ){
  width = w;
  height = h;
  bpp = b;
 
- bmap = (Pixel *) realloc( bmap, width*height*bpp );
- memcpy( bmap, bmp, width*height*bpp );
+ bmap = (Pixel *) realloc( bmap, width*height*sizeof( struct Pixel ) );
+ memcpy( bmap, bmp, width*height*sizeof( struct Pixel ) );
 }
 
 

@@ -52,13 +52,16 @@ class cBitmap{
   int setPixel( int x, int y, Pixel p );
 
   /* Copies bitmap into the provided parameter buffer. maxsize is the maximum space in buffer in sizeof(char) */
-  /* Output format is RGB in that order */
+  /* Output format is RGBA in that order */
   void getBitmap( unsigned char * buffer, int maxsize );
 
   /* Loads bitmap from bmp */
   /* bpp are bytes per pixel. Possible values are bpp=3 or bpp=4 */
   /* Assumed input format is RGB in that order */
   void setBitmap( unsigned char * bmp, int w, int h, int b );
+
+  /* Like getBitmap(2), but only copy pixels from given range */
+  void getRangeOfBitmap( unsigned char * buffer, int maxsize, int min_x, int max_x, int min_y, int max_y );
 
   /* Get parameters of bitmap */
   int getWidth();
