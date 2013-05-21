@@ -1,24 +1,16 @@
-#include "../include/Bitmap.hh"
-#include "../include/viewer.hh"
-
-#include <iostream>
-#include <vector>
+#include "segmentation.hh"
 
 using namespace std;
 
-struct Segment{
- cBitmap * bmap;
- int min_x;	//Minimum value of x (i.e., the position)
- int min_y;
- int max_x;	//Maximum value of x (together w position: width)
- int max_y;
-};
-
+#ifdef STANDALONE
 cBitmap * bitmap;
+#endif
 
 void quantizeBW( cBitmap * b );
 void findSegments( cBitmap * b, vector<Segment> & results );
 
+
+#ifdef STANDALONE
 int main( int argc, char ** argv ){
  vector<Segment> results;
 
@@ -48,7 +40,7 @@ int main( int argc, char ** argv ){
 
  return 0;
 }
-
+#endif
 
 void quantizeBW( cBitmap * b ){
  int threshold[3] = { 224, 224, 224 };
