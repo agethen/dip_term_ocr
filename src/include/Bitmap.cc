@@ -17,7 +17,10 @@ cBitmap::cBitmap( char * filename ){
  loadBitmap( filename );
 }
 
-cBitmap::~cBitmap(){}
+cBitmap::~cBitmap(){
+ //if( bmap != NULL )
+ // free( bmap );
+}
 
 int cBitmap::loadBitmap( char * filename ){
 
@@ -152,7 +155,7 @@ int cBitmap::saveBitmap( char * filename ){
  memcpy( dibheader+8*sizeof(int)+2*sizeof(short), &important, sizeof(int) );
 
  int paddingbytes = (4-((width*3)%4))%4;
- char padding[3] = { 0, 0, 0 };
+ const char padding[3] = { 0, 0, 0 };
 
  fstream output;
  output.open( filename, fstream::out|fstream::binary );
@@ -176,8 +179,10 @@ int cBitmap::saveBitmap( char * filename ){
    output.write( buffer+1, 1 );
    output.write( buffer, 1 );  
   }
-  if( paddingbytes )
+  if( paddingbytes ){
+   if( !output ) fprintf( stderr, "Some error" );
    output.write( padding, paddingbytes );
+  }
  }
  output.close();
 
@@ -227,6 +232,9 @@ void cBitmap::setBitmap( unsigned char * bmp, int w, int h, int b ){
  bpp = b;
 
  bmap = (Pixel *) realloc( bmap, width*height*sizeof( struct Pixel ) );
+
+ if( bmap == NULL ){ fprintf( stderr, "Could not allocate memory!\n" ); exit(1); }
+
  memcpy( bmap, bmp, width*height*sizeof( struct Pixel ) );
 }
 
@@ -234,3 +242,8 @@ void cBitmap::setBitmap( unsigned char * bmp, int w, int h, int b ){
 int cBitmap::getWidth(){ return width; }
 int cBitmap::getHeight(){ return height; }
 int cBitmap::getBPP(){ return bpp; }
+
+
+void cBitmap::setWidth( int w ){ width = w; }
+void cBitmap::setHeight( int h ){ height = h; }
+void cBitmap::setBPP( int d ){ bpp = d; }

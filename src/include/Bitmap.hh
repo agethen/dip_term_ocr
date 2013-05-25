@@ -67,5 +67,9 @@ class cBitmap{
   int getWidth();
   int getHeight();
   int getBPP(); //Size in Bytes, not Bits!
+
+  void setWidth( int w );
+  void setHeight( int h );
+  void setBPP( int d );
 };
 #endif

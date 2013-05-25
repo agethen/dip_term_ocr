@@ -1,16 +1,18 @@
-#include "split.hh"
-split::split()
+#include "Split.hh"
+
+cSplit::cSplit()
 {
   diff = 5;
 }
-void split::find_sentence_boundary(cBitmap &bmp)
+void cSplit::findSentenceBoundary(cBitmap * bmp)
 {
-	int s_width = bmp.getWidth();
-	int s_height = bmp.getHeight();
+	int s_width = bmp->getWidth();
+	int s_height = bmp->getHeight();
 	int top_found = 0;
 	int start_top, start_left;
 	int height, width;
 	Pixel prev, cur;
+
 	for(int i = 0; i < s_height; i++)
 	{
 		int count = 0;
@@ -18,11 +20,11 @@ void split::find_sentence_boundary(cBitmap &bmp)
 		{
 			if(j == 0)
 			{
-				bmp.getPixel(j, i, prev);
+				bmp->getPixel(j, i, prev);
 			}
 			else
 			{
-				bmp.getPixel(j, i, cur);
+				bmp->getPixel(j, i, cur);
 				//The conditions of decision making. Need to be checked.
 				if(top_found == 0)
 				{
@@ -81,11 +83,11 @@ void split::find_sentence_boundary(cBitmap &bmp)
 				{
 					if(l == s_width - 1)
 					{
-						bmp.getPixel(l, k, prev);
+						bmp->getPixel(l, k, prev);
 					}
 					else
 					{
-						bmp.getPixel(l, k, cur);
+						bmp->getPixel(l, k, cur);
 						//Find the right boundary of an sentence
 						if((abs(cur.r - prev.r) > diff) || (abs(cur.g - prev.g) > diff) || (abs(cur.b - prev.b) > diff))
 						{
@@ -106,7 +108,7 @@ void split::find_sentence_boundary(cBitmap &bmp)
 				}
 			}
 			width = right_most - start_left;
-			font_boundary sentence_a;
+			FontBoundary sentence_a;
 			sentence_a.top = start_top;
 			sentence_a.left = start_left;
 			sentence_a.right = start_left + width;
@@ -117,18 +119,18 @@ void split::find_sentence_boundary(cBitmap &bmp)
 	}
 	return;
 }
-void split::extract(cBitmap &bmp)
+void cSplit::extract(cBitmap * bmp)
 {
 	int left_found = 1;
 	int start_left, start_top = -1;
 	Pixel prev, cur;
-	int width, height;
-	for(int i = 0; i < sentences.size(); i++)
+	int width;
+	for( unsigned int i = 0; i < sentences.size(); i++)
 	{
 		start_left = sentences[i].left;
 		start_top = sentences[i].top;
 		int s_height = sentences[i].bottom - sentences[i].top;
-		vector<font_boundary> vec;
+		vector<FontBoundary> vec;
 		for(int j = sentences[i].left; j < sentences[i].right; j++)
 		{
 			int count = 0;
@@ -136,11 +138,11 @@ void split::extract(cBitmap &bmp)
 			{
 				if(k == sentences[i].top)
 				{
-					bmp.getPixel(j, k, prev);
+					bmp->getPixel(j, k, prev);
 				}
 				else
 				{
-					bmp.getPixel(j, k, cur);
+					bmp->getPixel(j, k, cur);
 					if(left_found == 0)
 					{
 						//The left boundary should suffer an extreme change of pixel
@@ -179,7 +181,7 @@ void split::extract(cBitmap &bmp)
 			if(count == s_height - 1) //j == 0 was used to be the "prev"
 			{
 				width = j - start_left;
-				font_boundary sentence_a;
+				FontBoundary sentence_a;
 				sentence_a.top = start_top;
 				sentence_a.left = start_left;
 				sentence_a.right = start_left + width;
@@ -191,30 +193,35 @@ void split::extract(cBitmap &bmp)
 		characters.push_back(vec);
 	}
 }
-void split::get_sentences()
+
+void cSplit::getSentences( FontBoundary & s, unsigned int i ){
+ s = sentences[i];
+}
+
+void cSplit::printSentences()
 {
-	for(int i = 0; i < sentences.size(); i++)
+	for( unsigned int i = 0; i < sentences.size(); i++)
 	{
 		fprintf(stderr, "%d %d %d %d\n", sentences[i].top, sentences[i].bottom, sentences[i].left, sentences[i].right);
 	}
 	return;
 }
-void split::get_characters()
+void cSplit::printCharacters()
 {
-	for(int i = 0; i < characters.size(); i++)
+	for( unsigned int i = 0; i < characters.size(); i++)
 	{
-		for(int j = 0; j < characters[i].size(); j++)
+		for( unsigned int j = 0; j < characters[i].size(); j++)
 		{
 			fprintf(stderr, "%d %d %d %d\n", characters[i][j].top, characters[i][j].bottom, characters[i][j].left, characters[i][j].right);
 		}
 	}
 	return;
 }
-void split::IO(unsigned char* &bmp, int width, int b)
+void cSplit::IO(unsigned char * bmp, int width, int b)
 {
 	int i = 0;//The index of the sentences
 	int sum_w = 0, sum = 0, height = characters[i][0].bottom - characters[i][0].top;
-	for(int j = 0; j < characters[i].size(); j++)
+	for( unsigned int j = 0; j < characters[i].size(); j++)
 	{
 		sum_w += characters[i][j].right - characters[i][j].left;
 	}
@@ -222,7 +229,7 @@ void split::IO(unsigned char* &bmp, int width, int b)
 	fprintf(stderr, "total_width = %d, height = %d, total = %d\n", sum_w, height, sum);
 	int accum = 0, count = 0;
 	unsigned char *result = new unsigned char[sum];
-	for(int m = 0; m < characters[i].size(); m++)
+	for( unsigned int m = 0; m < characters[i].size(); m++)
 	{
 		for(int j = characters[i][m].top; j < characters[i][m].bottom; j++)
 		{
