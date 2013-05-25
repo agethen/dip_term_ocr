@@ -14,14 +14,14 @@ int main( int argc, char ** argv ){
  cSplit * split = new cSplit();
  cBitmap * bitmap = new cBitmap( inputfile );
 
- vector<FontBoundary> t;
+ FontBoundary t;
 
  split->findSentenceBoundary( bitmap );
 
- t = split->sentences;
+ split->getSentences( t, 0 );
 
  /* This is important! Always add one to each dimension, as getRangeOfBitmap loads all pixels including the maximum */
- int size = (t[0].right-t[0].left+1)*( t[0].bottom - t[0].top+1 )*sizeof( Pixel );
+ int size = (t.right-t.left+1)*( t.bottom - t.top+1 )*sizeof( Pixel );
 
  /* Allocate some memory to get copy the bitmap */
  unsigned char * test = (unsigned char *) malloc( size );
@@ -29,10 +29,10 @@ int main( int argc, char ** argv ){
 
  /* Copy a range from the bitmap. NOTE: This command copies all pixels __including__ minimum and maximum, e.g., left <= i <= right, top <= j <= bottom */
  /* (That is why if you do not allocate enough memory above, you may run into problems */
- bitmap->getRangeOfBitmap( test, size, t[0].left, t[0].right, t[0].top, t[0].bottom );
+ bitmap->getRangeOfBitmap( test, size, t.left, t.right, t.top, t.bottom );
 
  /* Create a bitmap from buffer "test". Remember here, too, that minimum and maximum are included, so width and height should be (maximum-minimum+1) */
- bitmap->setBitmap( test, t[0].right-t[0].left+1, t[0].bottom-t[0].top+1, 3 );
+ bitmap->setBitmap( test, t.right-t.left+1, t.bottom-t.top+1, 3 );
 
  /* Save bitmap to file outputfile */
  bitmap->saveBitmap( outputfile );
