@@ -4,12 +4,18 @@ unsigned char ***hit_matrices;
 vector<int> num;
 unsigned char ***M_pattern;
 vector<int> M_num;
+int *x_map = new int[9];
+int *hash_lut_hit = new int[1024];
+int *hash_lut_M = new int[1024];
 void setup_matrix()
 {
+	x_map[5] = 2;	x_map[2] = 4;	x_map[1] = 8;
+	x_map[0] = 16;	x_map[3] = 32;	x_map[6] = 64;
+	x_map[7] = 128;	x_map[8] = 512;	x_map[4] = 0;
 	num.push_back(4);	num.push_back(4);	num.push_back(8);	num.push_back(8);
 	num.push_back(8);	num.push_back(10);	num.push_back(4);	num.push_back(4);
 	num.push_back(8);	num.push_back(4);	num.push_back(4);	num.push_back(1);
-	hit_matrices = new unsigned char **[12];
+	hit_matrices = new unsigned char **[11];
 	for(int i = 0; i < num.size(); i++)
 	{
 		hit_matrices[i] = new unsigned char *[num[i]];
@@ -317,12 +323,9 @@ void setup_matrix()
 	hit_matrices[10][3][6] = 1;	hit_matrices[10][3][7] = 1;	hit_matrices[10][3][8] = 1;
 
 
-	hit_matrices[11][0][0] = 1;	hit_matrices[11][0][1] = 1;	hit_matrices[11][0][2] = 1;
-	hit_matrices[11][0][3] = 1;	hit_matrices[11][0][4] = 1;	hit_matrices[11][0][5] = 1;
-	hit_matrices[11][0][6] = 1;	hit_matrices[11][0][7] = 1;	hit_matrices[11][0][8] = 1;
 
 
-
+	
 
 	M_num.push_back(4);		M_num.push_back(8);		M_num.push_back(4);		M_num.push_back(12);
 	M_num.push_back(32);	M_num.push_back(32);	M_num.push_back(224);	M_num.push_back(16);
@@ -1581,6 +1584,39 @@ void setup_matrix()
 	M_pattern[7][15][0] = 1;	M_pattern[7][15][1] = 0;	M_pattern[7][15][2] = 1;
 
 
+	x_map[5] = 2;	x_map[2] = 4;	x_map[1] = 8;
+	x_map[0] = 16;	x_map[3] = 32;	x_map[6] = 64;
+	x_map[7] = 128;	x_map[8] = 512;	x_map[4] = 0;
+
+	for(int i = 0; i < 1024; ++i)
+	{
+		hash_lut_hit[i] = 0;
+	}
+	for(int i = 0; i < num.size(); i++)
+	{
+		for(int j = 0; j < num[i]; j++)
+		{
+			int counter = 0;
+			for(int k = 0; k < 9; k++)
+			{
+				counter += (int)hit_matrices[i][j][k] * x_map[k];
+			}
+			hash_lut_hit[counter] = 1;
+		}
+	}
+
+	for(int i = 0; i < 1024; i++)
+		hash_lut_M[i] = 0;
+	for(int i = 0; i < M_num.size(); i++)
+	{
+		for(int j = 0; j < M_num[i]; j++)
+		{
+			int counter = 0;
+			for(int k = 0; k < 9; k++)
+				counter += (int)M_pattern[i][j][k] * x_map[k];
+			hash_lut_M[counter] = 1;
+		}
+	}
 
 
 
@@ -1589,6 +1625,7 @@ void setup_matrix()
 void show_matrix()
 {
 	
+
 	for(int i = 0; i < num.size(); i++)
 	{
 		fprintf(stderr, "bond: %d\n", i + 1);
