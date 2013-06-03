@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cmath>
 #include <cstring>
-#include "setup.cc"
+#include "new_setup.cc"
 using namespace std;
+
 hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
 {
 	width = w;
@@ -13,6 +14,8 @@ hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
 	for(int i = 0; i < height; i++)
 		for(int j = 0; j < width; j++)
 		{
+			M[i * width + j] = 0;
+			G[i * width + j] = 0;
 			double sum = 0;
 			for(int k = 0; k < 3; k++)
 			{
@@ -54,26 +57,47 @@ unsigned char hit_miss::check_for_hit(int h, int w)
 	delete(tmp);
 	return (unsigned char)hash_lut_hit[counter];
 }
-unsigned char hit_miss::check_for_M_hit(int h, int w)
+unsigned char hit_miss::check_for_noise(int h, int w)
 {
 	int sum = 0, br = 0;
 	int *tmp = new int [9];
 	for(int i = -1; i < 2; i++)
 		for(int j = -1; j < 2; j++)
 		{
-			if(((h + i) >= 0) && ((w + j) >= 0) && ((h + i) < height) && ((w + j) < width))
+			if(((h + i) >= 0) && ((w + j) >= 0) && ((h + i) < height) && ((w + j) < width) && (i != 0) && (j != 0))
 			{
-				sum += (int)bond[(i + 1) * 3 + j + 1] * (((int)M[(h + i) * width + w + j]) / 2);
-				tmp[3 * (i + 1) + j + 1] = (((int)M[(h + i) * width + w + j]) / 2);
+				sum += ((int)M[(h + i) * width + w + j]);
+				tmp[3 * (i + 1) + j + 1] = ((int)M[(h + i) * width + w + j]);
 			}
 			else
 				tmp[3 * (i + 1) + j + 1] = 0;
 		}
-	int counter = 0;
-	for(int i = 0; i < 9; i++)
-		counter += x_map[i] * tmp[i];
-	delete(tmp);
-	return (unsigned char)hash_lut_M[counter];
+	if(sum <= 2)
+		return M[h * width + w];
+	else
+		if((8 - 2 * sum) != 1)
+			return M[h * width + w];
+		else
+			if((tmp[5] == 0) || (tmp[7] == 0) || ((tmp[1] == 0) && (tmp[3] == 0)))
+				if ((tmp[1] == 0) || (tmp[3] == 0) || ((tmp[5] == 0) && (tmp[7] == 0)))
+				{
+					return 0;
+				}
+				else
+					return M[h * width + w];
+			else
+				return M[h * width + w];
+
+}
+void hit_miss::denoise()
+{
+	for(int i = 0; i < height; i++)
+		for(int j = 0; j < width; j++)
+		{
+			if(M[i * width + j] == 1)
+				G[i * width + j] = (unsigned char)check_for_noise(i, j);
+		}
+	return;
 }
 void hit_miss::skeleton()
 {
@@ -81,20 +105,9 @@ void hit_miss::skeleton()
 		for(int j = 0; j < width; j++)
 		{
 			if(buf[i * width + j] == 1)
-				M[i * width + j] = buf[i * width + j] + check_for_hit(i, j);
-			else
-				M[i * width + j] = 0;
+				M[i * width + j] = check_for_hit(i, j);
 		}
-	for(int i = 0; i < height; i++)
-		for(int j = 0; j < width; j++)
-		{
-			if(M[i * width + j] == 2)
-				G[i * width + j] = check_for_M_hit(i, j);
-			else
-				G[i * width + j] = M[i * width + j];
-		}
-
-	
+	return;
 }
 void hit_miss::shift()
 {
@@ -131,6 +144,7 @@ void hit_miss::show_M()
 	}
 	fprintf(stderr, "\n");
 }
+
 void hit_miss::show_G()
 {
 	for(int i = 0; i < height; i++)
@@ -155,4 +169,22 @@ void hit_miss::getShrunk(unsigned char* input, int w, int h)
 		return;
 	}
 }
+/*
+int main()
+{
+	setup_matrix();
+	cBitmap character("./Letters/B.bmp");
+	int w = character.getWidth();
+	int h = character.getHeight();
+	int b = character.getBPP();
+	unsigned char *J = new unsigned char[w * h * b];
+	character.getBitmap(J, sizeof(char) * (w * h * b));
+	hit_miss Kick(J, w, h, b);
+	Kick.show();
+	Kick.skeleton();
+	Kick.denoise();
+	Kick.show_M();
+	Kick.show_G();
 
+}
+*/
