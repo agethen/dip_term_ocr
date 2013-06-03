@@ -13,6 +13,7 @@
 
 #include "../Features/dummy_feature.hh"
 #include "../Features/euler.hh"
+#include "../Features/circularity.hh"
 
 using namespace std;
 

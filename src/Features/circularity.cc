@@ -1,5 +1,10 @@
 #include "circularity.hh"
 
+#include <iostream>
+using namespace std;
+
+void restoreImage( cBitmap * bitmap );
+
 int parseCircleComponent( cBitmap * bitmap, int x, int y, CircleComponent & c, unsigned char color ){
  Pixel p;
 
@@ -38,18 +43,6 @@ int parseCircleComponent( cBitmap * bitmap, int x, int y, CircleComponent & c, u
  result += parseCircleComponent( bitmap, x, y+1, c, color );
 
  return result;
-}
-
-
-void restoreImage( cBitmap * bitmap ){
- Pixel p;
- for( int i = 0; i < bitmap->getHeight(); i++ ){
-  for( int j = 0; j < bitmap->getWidth(); j++ ){
-   bitmap->getPixel( j, i, p );
-   p.r = p.g;
-   bitmap->setPixel( j, i, p );
-  }
- }
 }
 
 void findLakes( cBitmap * bitmap, vector<CircleComponent> & lakes ){
@@ -102,7 +95,7 @@ bool testCircularity( cBitmap * bitmap, CircleComponent & circle ){
    sum_dist += distance;
    num_dist++;
 
-   if( distance < (1-THRESH)*(sum_dist/num_dist) || distance > (1+THRESH)*(sum_dist/num_dist) ){
+   if( distance < floor((1-THRESH)*(sum_dist/num_dist)) || distance > ceil((1+THRESH)*(sum_dist/num_dist)) ){
     return false;
    }
   }
@@ -111,16 +104,38 @@ bool testCircularity( cBitmap * bitmap, CircleComponent & circle ){
  return true;
 }
 
+void removeFalseBorders( cBitmap * bitmap, int x, int y ){
+ Pixel white,t;
+ white.r = 150; white.g = 255; white.b = 255;
+
+ if( x < 0 || x >= bitmap->getWidth() || y < 0 || y >= bitmap->getHeight() ) return;	//Out of bounds
+
+ //cout << x << " " << y << endl;
+
+ bitmap->getPixel( x, y, t );
+ if( t.r == 0 && t.g == 0 && t.b == 0 ) return;						//Black pixel
+ if( t.r == 150 ) return;								//Already visited that pixel
+
+ bitmap->setPixel( x, y, white );
+
+ removeFalseBorders( bitmap, x-1, y );
+ removeFalseBorders( bitmap, x+1, y );
+ removeFalseBorders( bitmap, x, y-1 );
+ removeFalseBorders( bitmap, x, y+1 );
+}
+
 int countCircles( cBitmap * bitmap ){
  vector<CircleComponent> lakes;
  int numCircles = 0;
 
  findLakes( bitmap, lakes );
 
+ removeFalseBorders( bitmap, 0, 0 );
+
  for( unsigned int i = 0; i < lakes.size(); i++ )
   if( testCircularity( bitmap, lakes[i] ) ) numCircles++;
  
 
- restoreImage( bitmap );
+ //restoreImage( bitmap );
  return numCircles;
 }

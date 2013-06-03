@@ -5,7 +5,7 @@
 #include <vector>
 #include "../include/Bitmap.hh"
 
-#define THRESH 0.2	//How much may the radius deviate?
+#define THRESH 0.3	//How much may the radius deviate?
 
 using namespace std;
 
@@ -17,5 +17,7 @@ struct CircleComponent{
  int center_x;
  int center_y;
 };
+
+int countCircles( cBitmap * bitmap );
 
 #endif

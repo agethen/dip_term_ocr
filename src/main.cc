@@ -43,8 +43,13 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   feature = getEulerNumber( character );
   f.push_back( feature );
 
+  /* Compute Number of Circles */
+  feature = countCircles( character );
+  f.push_back( feature );
+
   centroids.push_back( make_pair( f, (unsigned char) trainingset_files[i][pos] ) );
  }
+
 }
 
 
@@ -86,7 +91,11 @@ int main( int argc, char ** argv ){
 
   feature = getEulerNumber( segments[i].bmap );
   f.push_back( feature );
-  weights.push_back( 500.0 );
+  weights.push_back( 150.0 );
+
+  feature = countCircles( segments[i].bmap );
+  f.push_back( feature );
+  weights.push_back( 100.0 );
 
   //Save datapoint
   datapoints.push_back( make_pair( f, 0 ) ); //Second value is not important atm.
