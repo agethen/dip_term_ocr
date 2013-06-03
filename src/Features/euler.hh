@@ -21,4 +21,6 @@ int getEulerNumber( cBitmap * bitmap );
 /* Helper functions. You should probably call getEulerNumber() instead */
 int getNumberOfConnectedComponents( vector<CharacterComponent> & data );
 int getNumberOfLakes( vector<CharacterComponent> & data );
+
+void parseComponent( cBitmap * bitmap, int x, int y, CharacterComponent & c );
 #endif
