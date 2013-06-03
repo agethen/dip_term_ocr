@@ -14,11 +14,12 @@ cout << endl;
 }
 
 //Compute distance between to vectors of same dimensionality
-double compute_distance( vector<double> & a, vector<double> & b ){
+double compute_distance( vector<double> & a, vector<double> & b, vector<double> & weights ){
  assert( a.size() == b.size() );
+
  double tmp = 0;
- for( unsigned int i = 0; i < a.size(); i++ )
-  tmp += (a[i]-b[i])*(a[i]-b[i]);
+ for( unsigned int i = 0; i < a.size(); i++ )		//For each feature
+  tmp += weights[i]*weights[i]*(a[i]-b[i])*(a[i]-b[i]); //Apply weight to vectors, compute square-dist
 
  return sqrt( tmp );
 }
@@ -31,7 +32,7 @@ double compute_distance( vector<double> & a, vector<double> & b ){
 //Parameters:
 //datapoints: a vector of pairs. Each pair contains the actual datapoint vector and the assigned cluster (to be determined)
 //centroids: a vector of pairs. Each pair contains the actual centroids vector and unsigned char representing the original character
-void simpleRecognizeCharacter( vector< pair<vector<double>, int> > & datapoints, vector< pair<vector<double>, unsigned char> > & centroids ){
+void simpleRecognizeCharacter( vector< pair<vector<double>, int> > & datapoints, vector< pair<vector<double>, unsigned char> > & centroids, vector<double> & weights ){
  if( datapoints.empty() || centroids.empty() )
   return;
 
@@ -42,7 +43,7 @@ void simpleRecognizeCharacter( vector< pair<vector<double>, int> > & datapoints,
   int c = -1;
   
   for( unsigned int j = 0; j < centroids.size(); j++ ){
-   double d = compute_distance( datapoints[i].first, centroids[j].first );
+   double d = compute_distance( datapoints[i].first, centroids[j].first, weights );
 
    if( d < distance ){
     distance = d;
