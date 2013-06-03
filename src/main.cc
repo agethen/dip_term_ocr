@@ -20,6 +20,8 @@ char trainingset_files[36][24] =
 };
 
 
+
+
 void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
  cBitmap * character;
  double feature;
@@ -28,10 +30,19 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   int pos = strlen( trainingset_files[i] )-1-4; //The position of the character in the filenames
 
   character = new cBitmap( trainingset_files[i] );
-  feature = computeFeatureDummy( character );
+  quantizeBW( character );
 
-  vector<double> f;
+  vector<double> f; 
+
+  /* Compute all features. Keep the order! */
+  /* Counts black pixels */
+  feature = computeFeatureDummy( character );
   f.push_back( feature );
+
+  /* Computes Euler number */
+  feature = getEulerNumber( character );
+  f.push_back( feature );
+
   centroids.push_back( make_pair( f, (unsigned char) trainingset_files[i][pos] ) );
  }
 }
@@ -43,32 +54,46 @@ int main( int argc, char ** argv ){
  vector<Segment> segments;
  vector< pair<vector<double>,int> > datapoints;
  vector< pair<vector<double>,unsigned char> > centroids;
+ vector<double> weights;
+
 
  bitmap = new cBitmap( argv[1] );
  
- quantizeBW( bitmap );
+ /* Do Preprocessing here */
 
- findSegments( bitmap, segments );
+ quantizeBW( bitmap );			//Convert to Black & White bitmap
+
+
+ /* Segmentation */
+ findSegments( bitmap, segments );	//Extract single characters (as bitmaps) from original image
  
- //Build features for training set
+
+ /* Build features for training set */
  buildDatabase( centroids );
 
-
- //Build features for data
+ /* Build features for data */
  for( unsigned int i = 0; i < segments.size(); i++ ){
-  //Compute a feature
-  double feature = computeFeatureDummy( segments[i].bmap );
+  double feature;
 
   //Create the datapoint for this segment (Do this only once!)
   vector<double> f;
+
+  /* Compute features */
+  /* Order ABSOLUTELY needs to be the same as in training (Can we maybe write a common function for this?) */
+  feature = computeFeatureDummy( segments[i].bmap );
   f.push_back( feature );
+  weights.push_back( 1.0 );
+
+  feature = getEulerNumber( segments[i].bmap );
+  f.push_back( feature );
+  weights.push_back( 500.0 );
 
   //Save datapoint
   datapoints.push_back( make_pair( f, 0 ) ); //Second value is not important atm.
  }
 
  //Do clustering
- simpleRecognizeCharacter( datapoints, centroids );
+ simpleRecognizeCharacter( datapoints, centroids, weights );
 
  //Print result ;)
  printClusteringResult( datapoints, centroids );

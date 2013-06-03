@@ -16,7 +16,7 @@ struct CharacterComponent{
 
 /* Find the Euler number for this bitmap */
 /* Bitmap is assumed to be black/white */
-int getEulerNumber( cBitmap & bitmap );
+int getEulerNumber( cBitmap * bitmap );
 
 /* Helper functions. You should probably call getEulerNumber() instead */
 int getNumberOfConnectedComponents( vector<CharacterComponent> & data );

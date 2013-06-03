@@ -10,8 +10,9 @@
 #include "viewer.hh"
 #include "../Decision/decision_clustering.hh"
 #include "../Segmentation/segmentation.hh"
-#include "../Features/dummy_feature.hh"
 
+#include "../Features/dummy_feature.hh"
+#include "../Features/euler.hh"
 
 using namespace std;
 
