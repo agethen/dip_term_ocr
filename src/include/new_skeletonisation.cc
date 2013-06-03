@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstring>
 #include "new_setup.cc"
+#include "new_skeletonisation.hh"
 using namespace std;
 
 hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
@@ -159,7 +160,7 @@ void hit_miss::show_G()
 }
 void hit_miss::getShrunk(unsigned char* input, int w, int h)
 {
-	if((w == weight) && (h == height))
+	if((w == width) && (h == height))
 	{
 		memcpy( input, G, w * h * sizeof(unsigned char) );
 	}
@@ -181,10 +182,14 @@ int main()
 	character.getBitmap(J, sizeof(char) * (w * h * b));
 	hit_miss Kick(J, w, h, b);
 	Kick.show();
-	Kick.skeleton();
-	Kick.denoise();
-	Kick.show_M();
-	Kick.show_G();
+	for(int i = 0; i < 5; i++)
+	{
+		Kick.skeleton();
+		Kick.denoise();
+		Kick.shift();
+		Kick.show_M();
+		Kick.show_G();
+	}
 
-}
-*/
+}*/
+

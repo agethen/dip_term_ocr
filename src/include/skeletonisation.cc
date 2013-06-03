@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstring>
 #include "setup.cc"
+#include "skeletonisation.hh"
 using namespace std;
 hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
 {
@@ -145,7 +146,7 @@ void hit_miss::show_G()
 }
 void hit_miss::getShrunk(unsigned char* input, int w, int h)
 {
-	if((w == weight) && (h == height))
+	if((w == width) && (h == height))
 	{
 		memcpy( input, G, w * h * sizeof(unsigned char) );
 	}
