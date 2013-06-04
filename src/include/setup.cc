@@ -1,5 +1,7 @@
-#include <vector>
+#include "setup.hh"
+
 using namespace std;
+
 unsigned char ***hit_matrices;
 vector<int> num;
 unsigned char ***M_pattern;
@@ -7,6 +9,7 @@ vector<int> M_num;
 int *x_map = new int[9];
 int *hash_lut_hit = new int[1024];
 int *hash_lut_M = new int[1024];
+
 void setup_matrix()
 {
 	x_map[5] = 2;	x_map[2] = 4;	x_map[1] = 8;

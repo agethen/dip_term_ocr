@@ -1,9 +1,11 @@
-#include <iostream>
-#include <cmath>
-#include <cstring>
-#include "new_setup.cc"
 #include "new_skeletonisation.hh"
+#include "new_setup.hh"
+
 using namespace std;
+
+extern int * x_map;
+extern int * hash_lut_hit;
+
 
 hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
 {
@@ -170,11 +172,13 @@ void hit_miss::getShrunk(unsigned char* input, int w, int h)
 		return;
 	}
 }
-/*
+
 int main()
 {
+	char filename[64];
+        strcpy( filename, "../../Letters/B.bmp" );
 	setup_matrix();
-	cBitmap character("./Letters/B.bmp");
+	cBitmap character(filename);
 	int w = character.getWidth();
 	int h = character.getHeight();
 	int b = character.getBPP();
@@ -191,5 +195,5 @@ int main()
 		Kick.show_G();
 	}
 
-}*/
+}
 

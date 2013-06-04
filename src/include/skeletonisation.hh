@@ -1,6 +1,13 @@
+#ifndef __SKELETONISATION_HH__
+#define __SKELETONISATION_HH__
+
+#include <cstdio>
 #include <iostream>
 #include <cmath>
 #include <cstring>
+
+#include "Bitmap.hh"
+
 using namespace std;
 struct m_window
 {
@@ -66,21 +73,5 @@ class hit_miss
 			memory. width and height is to double check.
 		*/
 		void getShrunk(unsigned char*, int w, int h);
-		/*
-			int main()
-			{
-				setup_matrix();
-				cBitmap character("./Letters/B.bmp");
-				int w = character.getWidth();
-				int h = character.getHeight();
-				int b = character.getBPP();
-				unsigned char *J = new unsigned char[w * h * b];
-				character.getBitmap(J, sizeof(char) * (w * h * b));
-				hit_miss Kick(J, w, h, b);
-				Kick.show();
-				Kick.skeleton();
-				Kick.show_G();
-
-			}
-		*/
 };
+#endif
