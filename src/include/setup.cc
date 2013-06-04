@@ -7,14 +7,14 @@ vector<int> num;
 unsigned char ***M_pattern;
 vector<int> M_num;
 int *x_map = new int[9];
-int *hash_lut_hit = new int[1024];
-int *hash_lut_M = new int[1024];
-
+int *hash_lut_hit = new int[512];
+int *hash_lut_M = new int[512];
+int *hash_lut_bridge = new int[512];
 void setup_matrix()
 {
-	x_map[5] = 2;	x_map[2] = 4;	x_map[1] = 8;
-	x_map[0] = 16;	x_map[3] = 32;	x_map[6] = 64;
-	x_map[7] = 128;	x_map[8] = 512;	x_map[4] = 0;
+	x_map[5] = 1;	x_map[2] = 2;	x_map[1] = 4;
+	x_map[0] = 8;	x_map[3] = 16;	x_map[6] = 32;
+	x_map[7] = 64;	x_map[8] = 128;	x_map[4] = 256;
 	num.push_back(4);	num.push_back(4);	num.push_back(8);	num.push_back(8);
 	num.push_back(8);	num.push_back(10);	num.push_back(4);	num.push_back(4);
 	num.push_back(8);	num.push_back(4);	num.push_back(4);	num.push_back(1);
@@ -1587,11 +1587,9 @@ void setup_matrix()
 	M_pattern[7][15][0] = 1;	M_pattern[7][15][1] = 0;	M_pattern[7][15][2] = 1;
 
 
-	x_map[5] = 2;	x_map[2] = 4;	x_map[1] = 8;
-	x_map[0] = 16;	x_map[3] = 32;	x_map[6] = 64;
-	x_map[7] = 128;	x_map[8] = 512;	x_map[4] = 0;
+	
 
-	for(int i = 0; i < 1024; ++i)
+	for(int i = 0; i < 512; ++i)
 	{
 		hash_lut_hit[i] = 0;
 	}
@@ -1608,7 +1606,7 @@ void setup_matrix()
 		}
 	}
 
-	for(int i = 0; i < 1024; i++)
+	for(int i = 0; i < 512; i++)
 		hash_lut_M[i] = 0;
 	for(int i = 0; i < M_num.size(); i++)
 	{
@@ -1620,9 +1618,67 @@ void setup_matrix()
 			hash_lut_M[counter] = 1;
 		}
 	}
+	for(int i = 0; i < 512; i++)
+	{
+		hash_lut_bridge[i] = 0;
+	}
+	hash_lut_bridge[12] = 1;	hash_lut_bridge[13] = 1;	hash_lut_bridge[33] = 1;
+	hash_lut_bridge[37] = 1;	hash_lut_bridge[40] = 1;	hash_lut_bridge[41] = 1;
+	hash_lut_bridge[44] = 1;	hash_lut_bridge[45] = 1;	hash_lut_bridge[66] = 1;
+	hash_lut_bridge[67] = 1;	hash_lut_bridge[68] = 1;	hash_lut_bridge[69] = 1;
+	hash_lut_bridge[70] = 1;	hash_lut_bridge[71] = 1;	hash_lut_bridge[76] = 1;
+	hash_lut_bridge[77] = 1;	hash_lut_bridge[96] = 1;	hash_lut_bridge[97] = 1;
+	hash_lut_bridge[98] = 1;	hash_lut_bridge[99] = 1;	hash_lut_bridge[100] = 1;
+	hash_lut_bridge[101] = 1;	hash_lut_bridge[102] = 1;	hash_lut_bridge[103] = 1;
+	hash_lut_bridge[104] = 1;	hash_lut_bridge[105] = 1;	hash_lut_bridge[108] = 1;
+	hash_lut_bridge[109] = 1;	hash_lut_bridge[129] = 1;	hash_lut_bridge[130] = 1;
+	hash_lut_bridge[131] = 1;	hash_lut_bridge[132] = 1;	hash_lut_bridge[133] = 1;
+	hash_lut_bridge[134] = 1;	hash_lut_bridge[135] = 1;	hash_lut_bridge[140] = 1;
+	hash_lut_bridge[141] = 1;	hash_lut_bridge[161] = 1;	hash_lut_bridge[165] = 1;
+	hash_lut_bridge[193] = 1;	hash_lut_bridge[194] = 1;	hash_lut_bridge[195] = 1;
+	hash_lut_bridge[196] = 1;	hash_lut_bridge[197] = 1;	hash_lut_bridge[198] = 1;
+	hash_lut_bridge[199] = 1;	hash_lut_bridge[204] = 1;	hash_lut_bridge[205] = 1;
+	hash_lut_bridge[225] = 1;	hash_lut_bridge[229] = 1;	hash_lut_bridge[257] = 1;
+	hash_lut_bridge[258] = 1;	hash_lut_bridge[259] = 1;	hash_lut_bridge[261] = 1;
+	hash_lut_bridge[262] = 1;	hash_lut_bridge[263] = 1;	hash_lut_bridge[264] = 1;
+	hash_lut_bridge[265] = 1;	hash_lut_bridge[266] = 1;	hash_lut_bridge[267] = 1;
+	hash_lut_bridge[268] = 1;	hash_lut_bridge[269] = 1;	hash_lut_bridge[270] = 1;
+	hash_lut_bridge[271] = 1;	hash_lut_bridge[289] = 1;	hash_lut_bridge[293] = 1;
+	hash_lut_bridge[296] = 1;	hash_lut_bridge[297] = 1;	hash_lut_bridge[300] = 1;
+	hash_lut_bridge[301] = 1;	hash_lut_bridge[321] = 1;	hash_lut_bridge[322] = 1;
+	hash_lut_bridge[323] = 1;	hash_lut_bridge[324] = 1;	hash_lut_bridge[325] = 1;
+	hash_lut_bridge[326] = 1;	hash_lut_bridge[327] = 1;	hash_lut_bridge[328] = 1;
+	hash_lut_bridge[329] = 1;	hash_lut_bridge[330] = 1;	hash_lut_bridge[331] = 1;
+	hash_lut_bridge[332] = 1;	hash_lut_bridge[333] = 1;	hash_lut_bridge[334] = 1;
+	hash_lut_bridge[335] = 1;	hash_lut_bridge[352] = 1;	hash_lut_bridge[353] = 1;
+	hash_lut_bridge[354] = 1;	hash_lut_bridge[355] = 1;	hash_lut_bridge[356] = 1;
+	hash_lut_bridge[357] = 1;	hash_lut_bridge[358] = 1;	hash_lut_bridge[359] = 1;
+	hash_lut_bridge[360] = 1;	hash_lut_bridge[361] = 1;	hash_lut_bridge[364] = 1;
+	hash_lut_bridge[365] = 1;	hash_lut_bridge[385] = 1;	hash_lut_bridge[386] = 1;
+	hash_lut_bridge[387] = 1;	hash_lut_bridge[388] = 1;	hash_lut_bridge[389] = 1;
+	hash_lut_bridge[390] = 1;	hash_lut_bridge[391] = 1;	hash_lut_bridge[396] = 1;
+	hash_lut_bridge[397] = 1;	hash_lut_bridge[417] = 1;	hash_lut_bridge[421] = 1;
+	hash_lut_bridge[449] = 1;	hash_lut_bridge[450] = 1;	hash_lut_bridge[451] = 1;
+	hash_lut_bridge[452] = 1;	hash_lut_bridge[453] = 1;	hash_lut_bridge[454] = 1;
+	hash_lut_bridge[455] = 1;	hash_lut_bridge[460] = 1;	hash_lut_bridge[461] = 1;
+	hash_lut_bridge[481] = 1;	hash_lut_bridge[485] = 1;	
 
-
-
+	for(int i = 0; i < num.size(); i++)
+	{
+		for(int j = 0; j < num[i]; j++)
+		{
+			delete(hit_matrices[i][j]);
+		}
+		delete(hit_matrices[i]);
+	}
+	for(int i = 0; i < M_num.size(); i++)
+	{
+		for(int j = 0; j < M_num[i]; j++)
+		{
+			delete(M_pattern[i][j]);
+		}
+		delete(M_pattern[i]);
+	}
 	return;
 }
 void show_matrix()
@@ -1661,4 +1717,10 @@ void show_M_matrix()
 		}
 	}
 	return;
+}
+void hash_clear()
+{
+	delete(hash_lut_hit);
+	delete(hash_lut_M);
+	delete(hash_lut_bridge);
 }

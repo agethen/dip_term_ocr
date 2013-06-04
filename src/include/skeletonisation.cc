@@ -7,6 +7,8 @@ using namespace std;
 extern int * x_map;
 extern int * hash_lut_hit;
 extern int * hash_lut_M;
+extern int * hash_lut_bridge;
+
 
 hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
 {
@@ -36,6 +38,8 @@ hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
 hit_miss::~hit_miss()
 {
 	delete(buf);
+	delete(M);
+	delete(G);
 	delete(bond);
 }
 unsigned char hit_miss::check_for_hit(int h, int w)
@@ -82,6 +86,7 @@ unsigned char hit_miss::check_for_M_hit(int h, int w)
 }
 void hit_miss::skeleton()
 {
+	
 	for(int i = 0; i < height; i++)
 		for(int j = 0; j < width; j++)
 		{
@@ -99,17 +104,47 @@ void hit_miss::skeleton()
 				G[i * width + j] = M[i * width + j];
 		}
 
-	
+}
+void hit_miss::Bridge()
+{
+	unsigned char *tmp = new unsigned char[9];
+	memcpy(M, G, width * height * sizeof(unsigned char));
+	memset(G, 0, width * height * sizeof(unsigned char));
+	for(int i = 0; i < height; i++)
+		for(int j = 0; j < width; j++)
+		{
+			if(M[i * width + j] == 1)
+			{
+				G[i * width + j] = 1;
+			}
+			else
+			{
+				int sum = 0;
+				
+				for(int k = -1; k < 2; k++)
+					for(int l = -1; l < 2; l++)
+					{
+						if(((k + i) >= 0) && ((l + j) >= 0) && ((k + i) < height) && ((l + j) < width))
+						{
+							sum += x_map[(1 + k) * 3 + 1 + l] * (int)M[(k + i) * width + l + j];
+							tmp[(1 + k) * 3 + 1 + l] = M[(k + i) * width + l + j];
+						}
+						else
+						{
+							tmp[(1 + k) * 3 + 1 + l] = 0;
+						}
+					}
+				G[i * width + j] = hash_lut_bridge[sum];
+			}
+		}
+	delete(tmp);
+	return;
 }
 void hit_miss::shift()
 {
 	memcpy(buf, G, width * height * sizeof(unsigned char));
-	for(int i = 0; i < height; i++)
-		for(int j = 0; j < width; j++)
-		{
-			M[i * width + j] = 0;
-			G[i * width + j] = 0;
-		}
+	memset(M, 0, width * height * sizeof(unsigned char));
+	memset(G, 0, width * height * sizeof(unsigned char));
 	return;
 }
 void hit_miss::show()
@@ -161,19 +196,27 @@ void hit_miss::getShrunk(unsigned char* input, int w, int h)
 	}
 }
 
-	int main()
+int main()
+{
+	char filename[64];
+    strcpy( filename, "../../Letters/B.bmp" );
+	setup_matrix();
+	cBitmap character(filename);
+	int w = character.getWidth();
+	int h = character.getHeight();
+	int b = character.getBPP();
+	unsigned char *J = new unsigned char[w * h * b];
+	character.getBitmap(J, sizeof(char) * (w * h * b));
+	hit_miss Kick(J, w, h, b);
+	Kick.show();
+	for(int i = 0; i < 2; i++)
 	{
-		char filename[64];
-	        strcpy( filename, "../../Letters/B.bmp" );
-		setup_matrix();
-		cBitmap character(filename);
-		int w = character.getWidth();
-		int h = character.getHeight();
-		int b = character.getBPP();
-		unsigned char *J = new unsigned char[w * h * b];
-		character.getBitmap(J, sizeof(char) * (w * h * b));
-		hit_miss Kick(J, w, h, b);
-		Kick.show();
 		Kick.skeleton();
-		Kick.show_G();
+		Kick.show();
+		Kick.shift();
 	}
+	Kick.skeleton();
+	Kick.Bridge();
+	Kick.show_G();
+	delete(J);
+}

@@ -69,6 +69,11 @@ class hit_miss
 		*/
 		void shift();
 		/*
+			Bridge() will be operated in the last interation to fix the unconnected part on M;
+			the result will be written to G.
+		*/
+		void Bridge();
+		/*
 			getShrunk takes a buffer, width, and height; the buffer needs to be allocated a chunk of 
 			memory. width and height is to double check.
 		*/
