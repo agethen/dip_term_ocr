@@ -18,8 +18,9 @@ void setup_matrix()
 	num.push_back(4);	num.push_back(4);	num.push_back(8);	num.push_back(8);
 	num.push_back(8);	num.push_back(10);	num.push_back(4);	num.push_back(4);
 	num.push_back(8);	num.push_back(4);	num.push_back(4);	num.push_back(1);
+
 	hit_matrices = new unsigned char **[11];
-	for(int i = 0; i < num.size(); i++)
+	for(int i = 0; i < 11; i++)		//Fixed: num.size() is bigger than 11 (size of array, see above)
 	{
 		hit_matrices[i] = new unsigned char *[num[i]];
 		for(int j = 0; j < num[i]; j++)
@@ -1593,7 +1594,7 @@ void setup_matrix()
 	{
 		hash_lut_hit[i] = 0;
 	}
-	for(int i = 0; i < num.size(); i++)
+	for(int i = 0; i < 11; i++)					//Fixed: num.size() is bigger than 11 (size of array, see above)
 	{
 		for(int j = 0; j < num[i]; j++)
 		{
@@ -1663,21 +1664,21 @@ void setup_matrix()
 	hash_lut_bridge[455] = 1;	hash_lut_bridge[460] = 1;	hash_lut_bridge[461] = 1;
 	hash_lut_bridge[481] = 1;	hash_lut_bridge[485] = 1;	
 
-	for(int i = 0; i < num.size(); i++)
+	for(int i = 0; i < 11; i++)				//Fixed: num.size() is bigger than 11 (size of array, see above)
 	{
 		for(int j = 0; j < num[i]; j++)
 		{
-			delete(hit_matrices[i][j]);
+			delete[] hit_matrices[i][j];
 		}
-		delete(hit_matrices[i]);
+		delete[] hit_matrices[i];
 	}
 	for(int i = 0; i < M_num.size(); i++)
 	{
 		for(int j = 0; j < M_num[i]; j++)
 		{
-			delete(M_pattern[i][j]);
+			delete[] M_pattern[i][j];
 		}
-		delete(M_pattern[i]);
+		delete[] M_pattern[i];
 	}
 	return;
 }
@@ -1720,7 +1721,7 @@ void show_M_matrix()
 }
 void hash_clear()
 {
-	delete(hash_lut_hit);
-	delete(hash_lut_M);
-	delete(hash_lut_bridge);
+	delete[] hash_lut_hit;
+	delete[] hash_lut_M;
+	delete[] hash_lut_bridge;
 }

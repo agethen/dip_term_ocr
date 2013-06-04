@@ -37,10 +37,10 @@ hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
 }
 hit_miss::~hit_miss()
 {
-	delete(buf);
-	delete(M);
-	delete(G);
-	delete(bond);
+	delete[] buf;
+	delete[] M;
+	delete[] G;
+	delete[] bond;
 }
 unsigned char hit_miss::check_for_hit(int h, int w)
 {
@@ -60,7 +60,7 @@ unsigned char hit_miss::check_for_hit(int h, int w)
 	int counter = 0;
 	for(int i = 0; i < 9; i++)
 		counter += x_map[i] * tmp[i];
-	delete(tmp);
+	delete[] tmp;
 	return (unsigned char)hash_lut_hit[counter];
 }
 unsigned char hit_miss::check_for_M_hit(int h, int w)
@@ -81,7 +81,7 @@ unsigned char hit_miss::check_for_M_hit(int h, int w)
 	int counter = 0;
 	for(int i = 0; i < 9; i++)
 		counter += x_map[i] * tmp[i];
-	delete(tmp);
+	delete[] tmp;
 	return (unsigned char)hash_lut_M[counter];
 }
 void hit_miss::skeleton()
@@ -137,7 +137,7 @@ void hit_miss::Bridge()
 				G[i * width + j] = hash_lut_bridge[sum];
 			}
 		}
-	delete(tmp);
+	delete[] tmp;
 	return;
 }
 void hit_miss::shift()
@@ -199,15 +199,19 @@ void hit_miss::getShrunk(unsigned char* input, int w, int h)
 int main()
 {
 	char filename[64];
-    strcpy( filename, "../../Letters/B.bmp" );
+    	strcpy( filename, "../../Letters/B.bmp" );
+
 	setup_matrix();
 	cBitmap character(filename);
 	int w = character.getWidth();
 	int h = character.getHeight();
 	int b = character.getBPP();
-	unsigned char *J = new unsigned char[w * h * b];
-	character.getBitmap(J, sizeof(char) * (w * h * b));
-	hit_miss Kick(J, w, h, b);
+
+	//NOTE: getBitmap() always uses sizeof(Pixel) Bytes per Pixel (as of now: 4 Bytes), no matter what the BPP is.
+	//getBPP() purpose is solely to remember the original bytes per pixel.
+	unsigned char *J = new unsigned char[w * h * sizeof(Pixel)];	
+	character.getBitmap(J, sizeof(char) * (w * h * sizeof(Pixel)));
+	hit_miss Kick(J, w, h, sizeof(Pixel));
 	Kick.show();
 	for(int i = 0; i < 2; i++)
 	{
@@ -218,5 +222,5 @@ int main()
 	Kick.skeleton();
 	Kick.Bridge();
 	Kick.show_G();
-	delete(J);
+	delete[] J;
 }
