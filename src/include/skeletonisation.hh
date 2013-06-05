@@ -63,7 +63,7 @@ class hit_miss
 		/*
 			skeleton() skeletonises the input image.
 		*/
-		void skeleton();
+		int skeleton();
 		/*
 			shift() shifts the G to buf; this function is called for another call of skeleton().
 		*/
@@ -71,12 +71,14 @@ class hit_miss
 		/*
 			Bridge() will be operated in the last interation to fix the unconnected part on M;
 			the result will be written to G.
+			Return value: True (>0) if any pixel was changed, False (==0) otherwise
 		*/
-		void Bridge();
+		int Bridge();
 		/*
 			getShrunk takes a buffer, width, and height; the buffer needs to be allocated a chunk of 
 			memory. width and height is to double check.
 		*/
 		void getShrunk(unsigned char*, int w, int h);
+		void exportToBitmap( cBitmap * target );
 };
 #endif

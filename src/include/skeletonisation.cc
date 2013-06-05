@@ -2,6 +2,8 @@
 
 #include "setup.hh"
 
+
+#include "viewer.hh"
 using namespace std;
 
 extern int * x_map;
@@ -88,9 +90,9 @@ unsigned char hit_miss::check_for_M_hit(int h, int w)
 	delete[] tmp;
 	return (unsigned char)hash_lut_M[counter];
 }
-void hit_miss::skeleton()
+int hit_miss::skeleton()
 {
-	
+	int count_eroded = 0;
 	for(int i = 0; i < height; i++)
 		for(int j = 0; j < width; j++)
 		{
@@ -106,12 +108,17 @@ void hit_miss::skeleton()
 				G[i * width + j] = check_for_M_hit(i, j);
 			else
 				G[i * width + j] = M[i * width + j];
-		}
 
+			if( buf[i*width+j] != G[i*width+j] )
+			 count_eroded++;
+		}
+ return count_eroded;
 }
-void hit_miss::Bridge()
+int hit_miss::Bridge()
 {
-	unsigned char *tmp = new unsigned char[9];
+	int changes = 0;						//Were there any changes?
+
+	//unsigned char *tmp = new unsigned char[9];			//tmp does not seem to do anything?
 	memcpy(M, G, width * height * sizeof(unsigned char));
 	memset(G, 0, width * height * sizeof(unsigned char));
 	for(int i = 0; i < height; i++)
@@ -131,18 +138,19 @@ void hit_miss::Bridge()
 						if(((k + i) >= 0) && ((l + j) >= 0) && ((k + i) < height) && ((l + j) < width))
 						{
 							sum += x_map[(1 + k) * 3 + 1 + l] * (int)M[(k + i) * width + l + j];
-							tmp[(1 + k) * 3 + 1 + l] = M[(k + i) * width + l + j];
+							//tmp[(1 + k) * 3 + 1 + l] = M[(k + i) * width + l + j];
 						}
 						else
 						{
-							tmp[(1 + k) * 3 + 1 + l] = 0;
+							//tmp[(1 + k) * 3 + 1 + l] = 0;
 						}
 					}
 				G[i * width + j] = hash_lut_bridge[sum];
+				if( G[i*width+j] == 1 ) changes++;
 			}
 		}
-	delete[] tmp;
-	return;
+	//delete[] tmp;
+	return changes;
 }
 void hit_miss::shift()
 {
@@ -200,25 +208,68 @@ void hit_miss::getShrunk(unsigned char* input, int w, int h)
 	}
 }
 
-int main()
+void hit_miss::exportToBitmap( cBitmap * target ){
+ Pixel p;
+
+ //Bitmap maybe uninitialized
+ target->setWidth( width );
+ target->setHeight( height );
+ target->setBPP( 3 );
+
+ target->allocateMemory();
+
+ for( int i = 0; i < height; i++ ){
+  for( int j = 0; j < width; j++ ){
+   if( buf[i*width+j] == 1 ){			//Black pixel
+    memset( &p, 0, sizeof( struct Pixel ) );	
+   }else{					//White pixel
+    p.r = 255;
+    p.g = 255;
+    p.b = 255;
+    p.a = 0;
+   }
+
+   target->setPixel( j, i, p );
+  }
+ }
+}
+
+int main( int argc, char ** argv)
 {
 	char filename[64];
     	strcpy( filename, "../../Letters/B.bmp" );
 
 	setup_matrix();
-	cBitmap * character = new cBitmap(filename);
+	cBitmap * character = new cBitmap(argv[1]);
 	hit_miss Kick( character );
 
 	Kick.show();
-	for(int i = 0; i < 2; i++)
+	int result;
+	int i = 0;
+	//Question: According to p419, 2nd paragraph, we should erode until nothing changes anymore. Atm, we get an empty image from that though
+	//Is this solely due to the additional hit matrices?
+	do
 	{
-		Kick.skeleton();
+		result = Kick.skeleton();
 		Kick.show();
 		Kick.shift();
-	}
+//For testing purposes
+i++; if( i >= 3 ) break;
+	}while( result );
+
 	Kick.skeleton();
-	Kick.Bridge();
+
+	while( Kick.Bridge() ){} //Repeat calling Bridge() as long as pixels are changed
+
 	Kick.show_G();
+
+	Kick.exportToBitmap( character );
+
+	/* Just for testing */
+	unsigned char * t = (unsigned char*) malloc( character->getWidth()*character->getHeight()*sizeof( struct Pixel ) );
+	character->getBitmap( t, character->getWidth()*character->getHeight()*sizeof( struct Pixel ) );
+	glutViewer( t, character->getWidth(), character->getHeight(), argc, argv, 400, 400 );
+	free( t );
 
 	delete character;
 }

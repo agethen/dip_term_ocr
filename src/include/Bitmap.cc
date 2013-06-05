@@ -247,3 +247,10 @@ int cBitmap::getBPP(){ return bpp; }
 void cBitmap::setWidth( int w ){ width = w; }
 void cBitmap::setHeight( int h ){ height = h; }
 void cBitmap::setBPP( int d ){ bpp = d; }
+
+void cBitmap::allocateMemory(){
+ if( width > 0 && height > 0 && bpp > 0 ){
+  bmap = (Pixel *) realloc( bmap, width*height*sizeof( struct Pixel ) );
+  if( bmap == NULL ){ fprintf( stderr, "Could not allocate memory!\n" ); exit(1); }
+ }
+};

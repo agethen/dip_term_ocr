@@ -119,6 +119,7 @@ void setup_matrix()
 	hit_matrices[3][3][3] = 0;	hit_matrices[3][3][4] = 1;	hit_matrices[3][3][5] = 1;
 	hit_matrices[3][3][6] = 0;	hit_matrices[3][3][7] = 1;	hit_matrices[3][3][8] = 0;
 
+
 	hit_matrices[3][4][0] = 0;	hit_matrices[3][4][1] = 0;	hit_matrices[3][4][2] = 1;
 	hit_matrices[3][4][3] = 0;	hit_matrices[3][4][4] = 1;	hit_matrices[3][4][5] = 1;
 	hit_matrices[3][4][6] = 0;	hit_matrices[3][4][7] = 0;	hit_matrices[3][4][8] = 1;
@@ -165,7 +166,6 @@ void setup_matrix()
 	hit_matrices[4][6][0] = 0;	hit_matrices[4][6][1] = 0;	hit_matrices[4][6][2] = 0;
 	hit_matrices[4][6][3] = 1;	hit_matrices[4][6][4] = 1;	hit_matrices[4][6][5] = 0;
 	hit_matrices[4][6][6] = 1;	hit_matrices[4][6][7] = 1;	hit_matrices[4][6][8] = 0;
-
 
 	hit_matrices[4][7][0] = 0;	hit_matrices[4][7][1] = 0;	hit_matrices[4][7][2] = 0;
 	hit_matrices[4][7][3] = 0;	hit_matrices[4][7][4] = 1;	hit_matrices[4][7][5] = 1;
@@ -657,7 +657,7 @@ void setup_matrix()
 
 
 
-
+//Tee 1)
 	M_pattern[5][0][0] = 0;	M_pattern[5][0][1] = 1;	M_pattern[5][0][2] = 0;
 	M_pattern[5][0][3] = 1;	M_pattern[5][0][4] = 1;	M_pattern[5][0][5] = 1;
 	M_pattern[5][0][6] = 0;	M_pattern[5][0][7] = 0;	M_pattern[5][0][8] = 0;
@@ -680,7 +680,7 @@ void setup_matrix()
 
 
 
-
+//Tee 2)
 	M_pattern[5][4][2] = 0;	M_pattern[5][4][1] = 1;	M_pattern[5][4][0] = 0;
 	M_pattern[5][4][3] = 1;	M_pattern[5][4][4] = 1;	M_pattern[5][4][5] = 1;
 	M_pattern[5][4][8] = 0;	M_pattern[5][4][7] = 0;	M_pattern[5][4][6] = 0;
@@ -703,7 +703,7 @@ void setup_matrix()
 
 
 
-
+//Tee 4) (!!)
 	M_pattern[5][8][0] = 0;	M_pattern[5][8][1] = 0;	M_pattern[5][8][2] = 0;
 	M_pattern[5][8][3] = 1;	M_pattern[5][8][4] = 1;	M_pattern[5][8][5] = 1;
 	M_pattern[5][8][6] = 0;	M_pattern[5][8][7] = 1;	M_pattern[5][8][8] = 0;
@@ -726,21 +726,18 @@ void setup_matrix()
 
 
 
-
+//Tee 3) (!!)
 	M_pattern[5][12][2] = 0;	M_pattern[5][12][1] = 0;	M_pattern[5][12][0] = 0;
 	M_pattern[5][12][3] = 1;	M_pattern[5][12][4] = 1;	M_pattern[5][12][5] = 1;
 	M_pattern[5][12][8] = 0;	M_pattern[5][12][7] = 1;	M_pattern[5][12][6] = 0;
-
 
 	M_pattern[5][13][2] = 0;	M_pattern[5][13][1] = 0;	M_pattern[5][13][0] = 0;
 	M_pattern[5][13][3] = 1;	M_pattern[5][13][4] = 1;	M_pattern[5][13][5] = 1;
 	M_pattern[5][13][8] = 1;	M_pattern[5][13][7] = 1;	M_pattern[5][13][6] = 0;
 
-
 	M_pattern[5][14][2] = 1;	M_pattern[5][14][1] = 0;	M_pattern[5][14][0] = 0;
 	M_pattern[5][14][3] = 1;	M_pattern[5][14][4] = 1;	M_pattern[5][14][5] = 1;
 	M_pattern[5][14][8] = 0;	M_pattern[5][14][7] = 1;	M_pattern[5][14][6] = 0;
-
 
 	M_pattern[5][15][2] = 1;	M_pattern[5][15][1] = 0;	M_pattern[5][15][0] = 0;
 	M_pattern[5][15][3] = 1;	M_pattern[5][15][4] = 1;	M_pattern[5][15][5] = 1;
@@ -749,7 +746,7 @@ void setup_matrix()
 
 
 
-
+//Tee 5)
 	M_pattern[5][16][0] = 0;	M_pattern[5][16][1] = 1;	M_pattern[5][16][6] = 0;
 	M_pattern[5][16][3] = 1;	M_pattern[5][16][4] = 1;	M_pattern[5][16][5] = 0;
 	M_pattern[5][16][2] = 0;	M_pattern[5][16][7] = 1;	M_pattern[5][16][8] = 0;
@@ -772,7 +769,7 @@ void setup_matrix()
 
 
 
-
+//Tee 6)
 	M_pattern[5][20][6] = 0;	M_pattern[5][20][1] = 1;	M_pattern[5][20][0] = 0;
 	M_pattern[5][20][3] = 1;	M_pattern[5][20][4] = 1;	M_pattern[5][20][5] = 0;
 	M_pattern[5][20][8] = 0;	M_pattern[5][20][7] = 1;	M_pattern[5][20][2] = 0;
@@ -795,7 +792,7 @@ void setup_matrix()
 
 
 
-
+//Tee 7)
 	M_pattern[5][24][6] = 0;	M_pattern[5][24][1] = 1;	M_pattern[5][24][0] = 0;
 	M_pattern[5][24][3] = 0;	M_pattern[5][24][4] = 1;	M_pattern[5][24][5] = 1;
 	M_pattern[5][24][8] = 0;	M_pattern[5][24][7] = 1;	M_pattern[5][24][2] = 0;
@@ -818,7 +815,7 @@ void setup_matrix()
 
 
 
-
+//Tee 8)
 	M_pattern[5][28][0] = 0;	M_pattern[5][28][1] = 1;	M_pattern[5][28][6] = 0;
 	M_pattern[5][28][3] = 0;	M_pattern[5][28][4] = 1;	M_pattern[5][28][5] = 1;
 	M_pattern[5][28][2] = 0;	M_pattern[5][28][7] = 1;	M_pattern[5][28][8] = 0;

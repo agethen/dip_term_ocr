@@ -71,5 +71,6 @@ class cBitmap{
   void setWidth( int w );
   void setHeight( int h );
   void setBPP( int d );
+  void allocateMemory();
 };
 #endif
