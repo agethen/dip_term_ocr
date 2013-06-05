@@ -1668,17 +1668,17 @@ void setup_matrix()
 	{
 		for(int j = 0; j < num[i]; j++)
 		{
-			delete(hit_matrices[i][j]);
+			delete[] hit_matrices[i][j];
 		}
-		delete(hit_matrices[i]);
+		delete[] hit_matrices[i];
 	}
 	for(int i = 0; i < M_num.size(); i++)
 	{
 		for(int j = 0; j < M_num[i]; j++)
 		{
-			delete(M_pattern[i][j]);
+			delete[] M_pattern[i][j];
 		}
-		delete(M_pattern[i]);
+		delete[] M_pattern[i];
 	}
 	return;
 }
@@ -1721,7 +1721,7 @@ void show_M_matrix()
 }
 void hash_clear()
 {
-	delete(hash_lut_hit);
-	delete(hash_lut_M);
-	delete(hash_lut_bridge);
+	delete[] hash_lut_hit;
+	delete[] hash_lut_M;
+	delete[] hash_lut_bridge;
 }
