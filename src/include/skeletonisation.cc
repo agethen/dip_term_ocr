@@ -10,21 +10,25 @@ extern int * hash_lut_M;
 extern int * hash_lut_bridge;
 
 
-hit_miss::hit_miss(unsigned char *input_rgb, int w, int h, int b)
+hit_miss::hit_miss( cBitmap * bitmap )
 {
-	width = w;
-	height = h;
+	Pixel p;
+	width = bitmap->getWidth();
+	height = bitmap->getHeight();
+
 	buf = new unsigned char[width * height];
 	M = new unsigned char[width * height];
 	G = new unsigned char[width * height];
+
 	for(int i = 0; i < height; i++)
 		for(int j = 0; j < width; j++)
 		{
 			double sum = 0;
-			for(int k = 0; k < 3; k++)
-			{
-				sum += (double)(input_rgb[i * width * b + j * b + k] * input_rgb[i * width * b + j * b + k]);
-			}
+			bitmap->getPixel( j, i, p );
+			sum += (double)(p.r * p.r);
+			sum += (double)(p.g * p.g);
+			sum += (double)(p.b * p.b);
+
 			if(sqrt(sum / 3.0) < 128)
 				buf[i * width + j] = 1;
 			else
@@ -202,16 +206,9 @@ int main()
     	strcpy( filename, "../../Letters/B.bmp" );
 
 	setup_matrix();
-	cBitmap character(filename);
-	int w = character.getWidth();
-	int h = character.getHeight();
-	int b = character.getBPP();
+	cBitmap * character = new cBitmap(filename);
+	hit_miss Kick( character );
 
-	//NOTE: getBitmap() always uses sizeof(Pixel) Bytes per Pixel (as of now: 4 Bytes), no matter what the BPP is.
-	//getBPP() purpose is solely to remember the original bytes per pixel.
-	unsigned char *J = new unsigned char[w * h * sizeof(Pixel)];	
-	character.getBitmap(J, sizeof(char) * (w * h * sizeof(Pixel)));
-	hit_miss Kick(J, w, h, sizeof(Pixel));
 	Kick.show();
 	for(int i = 0; i < 2; i++)
 	{
@@ -222,5 +219,6 @@ int main()
 	Kick.skeleton();
 	Kick.Bridge();
 	Kick.show_G();
-	delete[] J;
+
+	delete character;
 }

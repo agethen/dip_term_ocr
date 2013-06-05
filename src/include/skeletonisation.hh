@@ -35,7 +35,7 @@ class hit_miss
 			constructor: put the bitmap image, width, height and bpp; the bitwise of the image
 			is stored in buf. 
 		*/
-		hit_miss(unsigned char *, int, int, int);
+		hit_miss( cBitmap * bitmap );
 		~hit_miss();
 		/*
 			check_for_hit() is to check if the (row, column) match the lookup table. The result 
