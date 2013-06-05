@@ -113,8 +113,7 @@ void removeFalseBorders( cBitmap * bitmap, int x, int y ){
  //cout << x << " " << y << endl;
 
  bitmap->getPixel( x, y, t );
- if( t.r == 0 && t.g == 0 && t.b == 0 ) return;						//Black pixel
- if( t.r == 150 ) return;								//Already visited that pixel
+ if( t.r != 100 && t.r != 200 ) return;	//Black pixel, or already visited pixel
 
  bitmap->setPixel( x, y, white );
 
@@ -136,6 +135,6 @@ int countCircles( cBitmap * bitmap ){
   if( testCircularity( bitmap, lakes[i] ) ) numCircles++;
  
 
- //restoreImage( bitmap );
+ restoreImage( bitmap );
  return numCircles;
 }

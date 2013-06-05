@@ -33,6 +33,9 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   quantizeBW( character );
 
   vector<double> f; 
+  #ifdef DEBUG
+  cout << trainingset_files[i] << endl;
+  #endif
 
   /* Compute all features. Keep the order! */
   /* Counts black pixels */
@@ -46,6 +49,16 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   /* Compute Number of Circles */
   feature = countCircles( character );
   f.push_back( feature );
+
+  /* Compute Geometry */
+  computeGeometry( character );
+  f.push_back( getAverageDistance() );
+  f.push_back( getMaximumDistance() );
+  f.push_back( getArea() );
+  pair<int,int> f_coord = make_pair( 0,0 );
+  getWeightCenter( f_coord );
+  f.push_back( f_coord.first );
+  f.push_back( f_coord.second );
 
   centroids.push_back( make_pair( f, (unsigned char) trainingset_files[i][pos] ) );
  }
@@ -91,15 +104,46 @@ int main( int argc, char ** argv ){
 
   feature = getEulerNumber( segments[i].bmap );
   f.push_back( feature );
-  weights.push_back( 150.0 );
+  weights.push_back( 50.0 );
 
   feature = countCircles( segments[i].bmap );
   f.push_back( feature );
-  weights.push_back( 100.0 );
+  weights.push_back( 50.0 );
+
+  /* Compute Geometry */
+  computeGeometry( segments[i].bmap );
+
+  f.push_back( getAverageDistance() );
+  weights.push_back( 5 );
+
+  f.push_back( getMaximumDistance() );
+  weights.push_back( 5 );
+
+  f.push_back( getArea() );
+  weights.push_back( 1 );
+
+  pair<int,int> f_coord = make_pair( 0,0 );
+  getWeightCenter( f_coord );
+
+  f.push_back( f_coord.first );
+  weights.push_back( 10 );
+
+  f.push_back( f_coord.second );
+  weights.push_back( 10 );
+
 
   //Save datapoint
   datapoints.push_back( make_pair( f, 0 ) ); //Second value is not important atm.
  }
+
+#ifdef TESTING
+ /* Just for testing */
+ cBitmap * testme = segments[0].bmap;
+ unsigned char * t = (unsigned char*) malloc( testme->getWidth()*testme->getHeight()*sizeof( struct Pixel ) );
+ testme->getBitmap( t, testme->getWidth()*testme->getHeight()*sizeof( struct Pixel ) );
+ glutViewer( t, testme->getWidth(), testme->getHeight(), argc, argv, 400, 400 );
+ free( t );
+#endif
 
  //Do clustering
  simpleRecognizeCharacter( datapoints, centroids, weights );

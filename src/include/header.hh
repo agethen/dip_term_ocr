@@ -14,6 +14,7 @@
 #include "../Features/dummy_feature.hh"
 #include "../Features/euler.hh"
 #include "../Features/circularity.hh"
+#include "../Features/geometry.hh"
 
 using namespace std;
 
