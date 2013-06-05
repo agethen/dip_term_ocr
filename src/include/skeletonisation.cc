@@ -2,8 +2,8 @@
 
 #include "setup.hh"
 
-
 #include "viewer.hh"
+
 using namespace std;
 
 extern int * x_map;
