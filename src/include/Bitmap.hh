@@ -57,7 +57,7 @@ class cBitmap{
 
   /* Loads bitmap from bmp */
   /* bpp are bytes per pixel. Possible values are bpp=3 or bpp=4 */
-  /* Assumed input format is RGB in that order */
+  /* Assumed input format is RGBA in that order */
   void setBitmap( unsigned char * bmp, int w, int h, int b );
 
   /* Like getBitmap(2), but only copy pixels from given range */
