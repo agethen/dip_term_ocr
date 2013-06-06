@@ -60,10 +60,6 @@ void quantizeBW( cBitmap * b ){
 
 void parseSegment( cBitmap * b, Segment & s, int x, int y ){
  struct Pixel p;
- struct Pixel marked;
- marked.r = 1;
- marked.g = 1;
- marked.b = 1;
 
  if( x < 0 || x > b->getWidth() || y < 0 || y > b->getHeight() ) //Out of image bounds
   return;
@@ -82,7 +78,9 @@ void parseSegment( cBitmap * b, Segment & s, int x, int y ){
  if( y > s.max_y )
   s.max_y = y; 
 
- b->setPixel( x, y, marked );
+ p.r = 1;	//Mark pixel as visited
+
+ b->setPixel( x, y, p );
 
  /* Recurse all 8 neighbors */
  parseSegment( b, s, x-1, y-1 );
@@ -94,6 +92,16 @@ void parseSegment( cBitmap * b, Segment & s, int x, int y ){
  parseSegment( b, s, x, y+1 );
  parseSegment( b, s, x+1, y+1 );
  
+}
+
+void restoreSegment( cBitmap * b ){
+ Pixel p;
+ for( int i = 0; i < b->getWidth(); i++ )
+  for( int j = 0; j < b->getHeight(); j++ ){
+   b->getPixel( i, j, p ); 
+   p.r = p.g;
+   b->setPixel( i, j, p );
+  } 
 }
 
 void initSegment( Segment & s ){
@@ -137,6 +145,8 @@ void findSegments( cBitmap * b, vector<Segment> & results ){
     s.bmap = new cBitmap();
     s.bmap->setBitmap( buffer, dx, dy, 3 );
     free( buffer );
+
+    restoreSegment( s.bmap );	//There are still pixels with color 1,0,0 from parsing. Restore them.
 
     /* Save result */
     results.push_back( s );

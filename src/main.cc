@@ -96,19 +96,22 @@ int main( int argc, char ** argv ){
   //Create the datapoint for this segment (Do this only once!)
   vector<double> f;
 
+  /* Preprocessing */
+  resizeImage( segments[i].bmap, 32, 32 );		//Training data is 32x32
+
   /* Compute features */
   /* Order ABSOLUTELY needs to be the same as in training (Can we maybe write a common function for this?) */
   feature = computeFeatureDummy( segments[i].bmap );
   f.push_back( feature );
   weights.push_back( 1.0 );
 
-  feature = getEulerNumber( segments[i].bmap );
+  feature = getEulerNumber( segments[i].bmap );		//Euler feature. Relative stable -> High weight
   f.push_back( feature );
   weights.push_back( 50.0 );
 
   feature = countCircles( segments[i].bmap );
   f.push_back( feature );
-  weights.push_back( 50.0 );
+  weights.push_back( 20.0 );
 
   /* Compute Geometry */
   computeGeometry( segments[i].bmap );
@@ -126,10 +129,10 @@ int main( int argc, char ** argv ){
   getWeightCenter( f_coord );
 
   f.push_back( f_coord.first );
-  weights.push_back( 10 );
+  weights.push_back( 15 );
 
   f.push_back( f_coord.second );
-  weights.push_back( 10 );
+  weights.push_back( 15 );
 
 
   //Save datapoint

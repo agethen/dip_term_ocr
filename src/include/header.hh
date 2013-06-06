@@ -16,6 +16,8 @@
 #include "../Features/circularity.hh"
 #include "../Features/geometry.hh"
 
+#include "../Preprocessing/resize.hh"
+
 using namespace std;
 
 #endif

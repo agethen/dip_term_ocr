@@ -26,6 +26,7 @@ Geometry geometry( cBitmap * bitmap )
 	geo.area = sum;
 	geo.wc_x = int(wx / (sum * 1.0));
 	geo.wc_y = int(wy / (sum * 1.0));
+
 	double avg = 0, max = 0;
 	int num_dists = 0;
 	for(int i = 0; i < width; i++)
@@ -47,7 +48,7 @@ Geometry geometry( cBitmap * bitmap )
 	geo.Max_dis = max;
 
 	if( num_dists > 0 )
-	 geo.avg_dis = avg/num_dists;
+	 geo.avg_dis = avg/(double)num_dists;
         else
 	 geo.avg_dis = 0;
 
