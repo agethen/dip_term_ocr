@@ -10,8 +10,14 @@ int *x_map = new int[9];
 int *hash_lut_hit = new int[512];
 int *hash_lut_M = new int[512];
 int *hash_lut_bridge = new int[512];
+
+bool isInitialized = false;
+
 void setup_matrix()
 {
+  if( isInitialized ) return;	//There seems to be some problem (Segmentation fault) calling this method twice. For now, protection against repeated calling.
+  isInitialized = true;
+
 	x_map[0] = 1;	x_map[1] = 2;	x_map[2] = 4;
 	x_map[3] = 8;	x_map[4] = 16;	x_map[5] = 32;
 	x_map[6] = 64;	x_map[7] = 128;	x_map[8] = 256;

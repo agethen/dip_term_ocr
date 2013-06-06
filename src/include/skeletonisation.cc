@@ -124,7 +124,7 @@ int hit_miss::Bridge()
 	for(int i = 0; i < height; i++)
 		for(int j = 0; j < width; j++)
 		{
-			if(M[i * width + j] == 1)
+			if(buf[i * width + j] == 1)
 			{
 				G[i * width + j] = 1;
 			}
@@ -137,7 +137,7 @@ int hit_miss::Bridge()
 					{
 						if(((k + i) >= 0) && ((l + j) >= 0) && ((k + i) < height) && ((l + j) < width))
 						{
-							sum += x_map[(1 + k) * 3 + 1 + l] * (int)M[(k + i) * width + l + j];
+							sum += x_map[(1 + k) * 3 + 1 + l] * (int)buf[(k + i) * width + l + j];
 							//tmp[(1 + k) * 3 + 1 + l] = M[(k + i) * width + l + j];
 						}
 						else
@@ -146,7 +146,7 @@ int hit_miss::Bridge()
 						}
 					}
 				G[i * width + j] = hash_lut_bridge[sum];
-				if( G[i*width+j] == 1 ) changes++;
+				if( G[i*width+j] != buf[i*width+j] ) changes++;
 			}
 		}
 	//delete[] tmp;
@@ -234,6 +234,8 @@ void hit_miss::exportToBitmap( cBitmap * target ){
  }
 }
 
+
+/*
 int main( int argc, char ** argv)
 {
 	char filename[64];
@@ -243,7 +245,6 @@ int main( int argc, char ** argv)
 	cBitmap * character = new cBitmap(argv[1]);
 	hit_miss Kick( character );
 
-	Kick.show();
 	int result;
 	int i = 0;
 	//Question: According to p419, 2nd paragraph, we should erode until nothing changes anymore. Atm, we get an empty image from that though
@@ -251,21 +252,22 @@ int main( int argc, char ** argv)
 	do
 	{
 		result = Kick.skeleton();
-		Kick.show();
+		//Kick.show_M();
 		Kick.shift();
+
 //For testing purposes
-i++; if( i >= 3 ) break;
+//i++; if( i >= 3 ) break;
+
 	}while( result );
 
-	Kick.skeleton();
 
-	while( Kick.Bridge() ){} //Repeat calling Bridge() as long as pixels are changed
+	Kick.Bridge();
+	Kick.shift();
 
-	Kick.show_G();
 
 	Kick.exportToBitmap( character );
 
-	/* Just for testing */
+	//Just for testing
 	unsigned char * t = (unsigned char*) malloc( character->getWidth()*character->getHeight()*sizeof( struct Pixel ) );
 	character->getBitmap( t, character->getWidth()*character->getHeight()*sizeof( struct Pixel ) );
 	glutViewer( t, character->getWidth(), character->getHeight(), argc, argv, 400, 400 );
@@ -273,3 +275,4 @@ i++; if( i >= 3 ) break;
 
 	delete character;
 }
+*/
