@@ -6,7 +6,8 @@
 /* Perform character recognition */
 /* @datapoints: Characters to be classified. Consists of: vector<double>, containing the feature values. int, the centroid index to be determined */
 /* @centroids: The characters we can recognize. Consists of: vector<double>, containing the feature values. unsigned char, the character it resembles */
-void simpleRecognizeCharacter( vector< pair<vector<double>, int> > & datapoints, vector< pair<vector<double>, unsigned char> > & centroids, vector<double> & weights );
+void simpleRecognizeCharacter( 	vector< pair<vector<double>, int> > & datapoints, vector< pair<vector<double>, unsigned char> > & centroids, vector<double> & weights,
+				vector<double*> & shape_db, vector<double*> & shapes, double shape_weight );
 
 /* Print the result of the recognition */
 /* @datapoints: Classified characters */

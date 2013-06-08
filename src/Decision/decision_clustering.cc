@@ -32,18 +32,28 @@ double compute_distance( vector<double> & a, vector<double> & b, vector<double> 
 //Parameters:
 //datapoints: a vector of pairs. Each pair contains the actual datapoint vector and the assigned cluster (to be determined)
 //centroids: a vector of pairs. Each pair contains the actual centroids vector and unsigned char representing the original character
-void simpleRecognizeCharacter( vector< pair<vector<double>, int> > & datapoints, vector< pair<vector<double>, unsigned char> > & centroids, vector<double> & weights ){
+//shape_db and shapes are split since they are histograms that cannot be expressed as a single double
+void simpleRecognizeCharacter(
+				vector< pair<vector<double>, int> > & datapoints, 
+				vector< pair<vector<double>, unsigned char> > & centroids, 
+				vector<double> & weights,
+				vector<double*> & shape_db, vector<double*> & shapes, double shape_weight ){
  if( datapoints.empty() || centroids.empty() )
   return;
+
+ assert( datapoints.size() == shapes.size() );
+ assert( shape_db.size() == centroids.size() );
 
  //int dimensionality = centroids[0].first.size();	//The (expected) dimensionality of the datapoints and centroids
 
  for( unsigned int i = 0; i < datapoints.size(); i++ ){
   double distance = HUGE_VAL;				//Start with distance infinity (i.e., a very high value)
   int c = -1;
+  double * hist_shape = shapes[i];
   
   for( unsigned int j = 0; j < centroids.size(); j++ ){
-   double d = compute_distance( datapoints[i].first, centroids[j].first, weights );
+   double shape_dist = chiSquare( hist_shape, shape_db[j], NUM_BINS )*shape_weight;
+   double d = compute_distance( datapoints[i].first, centroids[j].first, weights )+shape_dist;
 
    if( d < distance ){
     distance = d;

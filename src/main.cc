@@ -19,7 +19,7 @@ char trainingset_files[36][24] =
  { PATH_PREFIX"/W.bmp\0" }, { PATH_PREFIX"/X.bmp\0" }, { PATH_PREFIX"/Y.bmp\0" }, { PATH_PREFIX"/Z.bmp\0" },
 };
 
-
+vector<double*> hist_database;
 
 
 void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
@@ -38,6 +38,11 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   #endif
 
   /* Compute all features. Keep the order! */
+  /* Shape Contexts */
+  double * hist = (double*) malloc( NUM_BINS*sizeof( double ) );
+  chooseSamplePoints( character, 100, hist );
+  hist_database.push_back( hist );
+
   /* Counts black pixels */
   feature = computeFeatureDummy( character );
   f.push_back( feature );
@@ -71,9 +76,11 @@ int main( int argc, char ** argv ){
 
  vector<Segment> segments;
  vector< pair<vector<double>,int> > datapoints;
+ vector<double*> shapes;
  vector< pair<vector<double>,unsigned char> > centroids;
  vector<double> weights;
 
+ const double shape_weight = 100;
 
  bitmap = new cBitmap( argv[1] );
  
@@ -100,6 +107,10 @@ int main( int argc, char ** argv ){
   resizeImage( segments[i].bmap, 32, 32 );		//Training data is 32x32
 
   /* Compute features */
+  double * hist = (double*) malloc( NUM_BINS*sizeof( double ) );
+  chooseSamplePoints( segments[i].bmap, 100, hist );
+  shapes.push_back( hist );
+
   /* Order ABSOLUTELY needs to be the same as in training (Can we maybe write a common function for this?) */
   feature = computeFeatureDummy( segments[i].bmap );
   f.push_back( feature );
@@ -149,7 +160,7 @@ int main( int argc, char ** argv ){
 #endif
 
  //Do clustering
- simpleRecognizeCharacter( datapoints, centroids, weights );
+ simpleRecognizeCharacter( datapoints, centroids, weights, hist_database, shapes, shape_weight );
 
  //Print result ;)
  printClusteringResult( datapoints, centroids );

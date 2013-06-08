@@ -11,12 +11,15 @@
 #include "../Decision/decision_clustering.hh"
 #include "../Segmentation/segmentation.hh"
 
+#include "../Features/circularity.hh"
 #include "../Features/dummy_feature.hh"
 #include "../Features/euler.hh"
-#include "../Features/circularity.hh"
 #include "../Features/geometry.hh"
+#include "../Features/shapeContexts.hh"
 
 #include "../Preprocessing/resize.hh"
+
+#define NUM_BINS 10
 
 using namespace std;
 

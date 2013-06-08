@@ -7,12 +7,12 @@
 #include <vector>
 #include <utility>
 
-#include "../include/boundary.hh"
-#include "../include/Bitmap.hh"
-#include "../Segmentation/segmentation.hh"
-
-#define NUM_BINS 10
+#include "../include/header.hh"
 
 using namespace std;
+
+void chooseAllPoints( cBitmap * bitmap, double * norm_hist );
+void chooseSamplePoints( cBitmap * bitmap, int num_points, double * norm_hist);
+double chiSquare( double * hist_a, double * hist_b, int size );
 
 #endif

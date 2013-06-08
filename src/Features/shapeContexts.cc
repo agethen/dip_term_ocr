@@ -33,7 +33,7 @@ bool chooseRandomPoint( cBitmap * bitmap, pair<int,int> & coord ){
 
 double distance( vector<pair<int,int> > & s, int i, int j ){
  double t =  sqrt( (s[i].first-s[j].first)*(s[i].first-s[j].first) + (s[i].second-s[j].second)*(s[i].second-s[j].second) );
- return t;
+ return log( t );
 }
 
 void printHistogram( double * hist, int num ){
@@ -48,14 +48,14 @@ void printHistogram( double * hist, int num ){
 
 void computeDistances( vector<pair<int,int> > & samples, double * norm_hist ){
  /* hist_distances[0]: #samples with distance 0, etc.
-    Assuming image size is 32*32, the max distance is sqrt(2)*32 = 45 */
+    Assuming image size is 32*32, the max distance is 10*log(sqrt(2)*32) = 38 */
  int hist_distances[48];	
  memset( hist_distances, 0, 48*sizeof( int ) );
 
  for( unsigned int i = 0; i < samples.size(); i++ ){
   for( unsigned int j = 0; j < samples.size(); j++ ){
    if( i == j ) continue;
-   int dist = (int) distance( samples, i, j );
+   int dist = (int)(10*distance( samples, i, j ));
 
    if( dist < 0 || dist > 47 ) continue;
 
@@ -75,11 +75,11 @@ void computeDistances( vector<pair<int,int> > & samples, double * norm_hist ){
   }
  }
 
- double span_bin = (max-min)/(double)NUM_BINS;
+ double span_bin = (max-min)/(double)(NUM_BINS-1);
  memset( norm_hist, 0, NUM_BINS*sizeof( double ) );
 
- for( int i = 0; i < 48; i++ ){
-  norm_hist[(int)(i/span_bin)] += hist_distances[i]/count;
+ for( int i = min; i <= max; i++ ){
+  norm_hist[(int)((i-min)/span_bin)] += hist_distances[i]/count;
  }
 }
 
@@ -105,8 +105,10 @@ double chiSquare( double * hist_a, double * hist_b, int size ){
  double nom = 0;
 
  for( int i = 0; i < size; i++ ){
-  nom = (hist_a[i]-hist_b[i])*(hist_a[i]-hist_b[i]);
-  sum += nom/(hist_a[i]+hist_b[i]);
+  if( hist_a[i]+hist_b[i] > 0 ){
+   nom = (hist_a[i]-hist_b[i])*(hist_a[i]-hist_b[i]);
+   sum += nom/(hist_a[i]+hist_b[i]);
+  }
  }
  return sum/2.0;
 }
@@ -127,6 +129,7 @@ void chooseAllPoints( cBitmap * bitmap, double * norm_hist ){
  computeDistances( samples, norm_hist );
 }
 
+/*
 int main( int argc, char ** argv ){
  if( argc != 3 ) return 0;
  cBitmap * bitmap = new cBitmap( argv[1] );
@@ -138,8 +141,8 @@ int main( int argc, char ** argv ){
  quantizeBW( bitmap );
  quantizeBW( second );
 
- chooseSamplePoints( bitmap, 20, hist_a );
- chooseSamplePoints( second, 20, hist_b );
+ chooseSamplePoints( bitmap, 100, hist_a );
+ chooseSamplePoints( second, 100, hist_b );
 
  printHistogram( hist_a, NUM_BINS );
  printHistogram( hist_b, NUM_BINS );
@@ -147,3 +150,4 @@ int main( int argc, char ** argv ){
  double result = chiSquare( hist_a, hist_b, NUM_BINS );
  printf( "Result is: %f\n", result );
 }
+*/
