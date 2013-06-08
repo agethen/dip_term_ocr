@@ -4,8 +4,7 @@
 #include <iostream>
 
 #include "../include/Bitmap.hh"
-#include "../include/skeletonisation.hh"
-#include "../include/setup.hh"
+#include "../include/boundary.hh"
 #include "../include/viewer.hh"
 #include "../Segmentation/segmentation.hh"
 

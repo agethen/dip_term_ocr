@@ -51,13 +51,13 @@ void extractBoundary( cBitmap * image, cBitmap * result ){
    tmp->getPixel( i, j, p2 );
 
    if( p1.r == p2.r ){
-    p1.r = 0;
-    p1.g = 0;
-    p1.b = 0;
-   }else{
     p1.r = 255;
     p1.g = 255;
     p1.b = 255;
+   }else{
+    p1.r = 0;
+    p1.g = 0;
+    p1.b = 0;
    }
 
    result->setPixel( i, j, p1 );

@@ -80,7 +80,7 @@ int main( int argc, char ** argv ){
  vector< pair<vector<double>,unsigned char> > centroids;
  vector<double> weights;
 
- const double shape_weight = 100;
+ const double shape_weight = 0;
 
  bitmap = new cBitmap( argv[1] );
  
