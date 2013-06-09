@@ -4,7 +4,6 @@ using namespace std;
 
 void printClusteringResult( vector< pair<vector<double>, int> > & datapoints, vector< pair<vector<double>, unsigned char> > & centroids ){
  cout << "Recognized characters: " << endl;
-
  for( unsigned int i = 0; i < datapoints.size(); i++ ){
   cout << centroids[datapoints[i].second].second << " ";
 if( i%25 == 24 )

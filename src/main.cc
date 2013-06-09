@@ -40,7 +40,7 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   /* Compute all features. Keep the order! */
   /* Shape Contexts */
   double * hist = (double*) malloc( NUM_BINS*sizeof( double ) );
-  chooseSamplePoints( character, 100, hist );
+  choosePointsUniform( character, 100, hist );
   hist_database.push_back( hist );
 
   /* Counts black pixels */
@@ -55,7 +55,15 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   feature = countCircles( character );
   f.push_back( feature );
 
+  /* Straight lines */
+  feature = countVerticalLines( character );
+  f.push_back( feature );
+
+  feature = countHorizontalLines( character );
+  f.push_back( feature );
+
   /* Compute Geometry */
+
   computeGeometry( character );
   f.push_back( getAverageDistance() );
   f.push_back( getMaximumDistance() );
@@ -72,7 +80,7 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
 
 
 int main( int argc, char ** argv ){
- if( argc != 2 ) exit(1);
+ if( argc != 3 ) exit(1);
 
  vector<Segment> segments;
  vector< pair<vector<double>,int> > datapoints;
@@ -80,14 +88,13 @@ int main( int argc, char ** argv ){
  vector< pair<vector<double>,unsigned char> > centroids;
  vector<double> weights;
 
- const double shape_weight = 0;
+ const double shape_weight = 50;
 
  bitmap = new cBitmap( argv[1] );
  
  /* Do Preprocessing here */
 
  quantizeBW( bitmap );			//Convert to Black & White bitmap
-
 
  /* Segmentation */
  findSegments( bitmap, segments );	//Extract single characters (as bitmaps) from original image
@@ -108,7 +115,7 @@ int main( int argc, char ** argv ){
 
   /* Compute features */
   double * hist = (double*) malloc( NUM_BINS*sizeof( double ) );
-  chooseSamplePoints( segments[i].bmap, 100, hist );
+  choosePointsUniform( segments[i].bmap, 100, hist );
   shapes.push_back( hist );
 
   /* Order ABSOLUTELY needs to be the same as in training (Can we maybe write a common function for this?) */
@@ -120,11 +127,24 @@ int main( int argc, char ** argv ){
   f.push_back( feature );
   weights.push_back( 50.0 );
 
+  /* Circles */
+
   feature = countCircles( segments[i].bmap );
   f.push_back( feature );
-  weights.push_back( 20.0 );
+  weights.push_back( 10.0 );
+
+  /* Straight lines */
+  feature = countVerticalLines( segments[i].bmap );
+  f.push_back( feature );
+  weights.push_back( 30.0 );
+
+  feature = countHorizontalLines( segments[i].bmap );
+  f.push_back( feature );
+  weights.push_back( 30.0 );
+
 
   /* Compute Geometry */
+
   computeGeometry( segments[i].bmap );
 
   f.push_back( getAverageDistance() );
@@ -150,15 +170,17 @@ int main( int argc, char ** argv ){
   datapoints.push_back( make_pair( f, 0 ) ); //Second value is not important atm.
  }
 
+
 #ifdef TESTING
  /* Just for testing */
- cBitmap * testme = segments[0].bmap;
+ int indexno = 0;
+ sscanf( argv[2], "%d", &indexno );
+ cBitmap * testme = segments[indexno].bmap;
  unsigned char * t = (unsigned char*) malloc( testme->getWidth()*testme->getHeight()*sizeof( struct Pixel ) );
  testme->getBitmap( t, testme->getWidth()*testme->getHeight()*sizeof( struct Pixel ) );
  glutViewer( t, testme->getWidth(), testme->getHeight(), argc, argv, 400, 400 );
  free( t );
 #endif
-
  //Do clustering
  simpleRecognizeCharacter( datapoints, centroids, weights, hist_database, shapes, shape_weight );
 

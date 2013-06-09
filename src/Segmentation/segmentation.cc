@@ -43,7 +43,7 @@ int main( int argc, char ** argv ){
 #endif
 
 void quantizeBW( cBitmap * b ){
- int threshold[3] = { 224, 224, 224 };
+ int threshold[3] = { 190, 190, 190 };
  struct Pixel p;
 
  for( int i = 0; i < b->getWidth(); i++ ){
@@ -120,6 +120,32 @@ s.min_y -= PADDING; if( s.min_y < 0 ) s.min_y = 0;
 s.max_y += PADDING; if( s.max_y >= h ) s.max_y = h;
 }
 
+void clearPadding( cBitmap * b ){
+ Pixel white;
+ white.r = 255;
+ white.g = 255;
+ white.b = 255;
+
+ for( int i = 0; i < PADDING; i++ ){
+  for( int j = 0; j < b->getWidth(); j++ )
+   b->setPixel( j, i, white );
+ }
+ for( int i = b->getHeight()-PADDING; i < b->getHeight(); i++ ){
+  for( int j = 0; j < b->getWidth(); j++ )
+   b->setPixel( j, i, white );
+ }
+
+ for( int j = 0; j < PADDING; j++ ){
+  for( int i = 0; i < b->getHeight(); i++ )
+   b->setPixel( j, i, white );
+ }
+
+ for( int j = b->getWidth()-PADDING; j < b->getWidth(); j++ ){
+  for( int i = 0; i < b->getHeight(); i++ )
+   b->setPixel( j, i, white );  
+ }
+}
+
 void findSegments( cBitmap * b, vector<Segment> & results ){
  struct Pixel p;
 
@@ -147,6 +173,8 @@ void findSegments( cBitmap * b, vector<Segment> & results ){
     free( buffer );
 
     restoreSegment( s.bmap );	//There are still pixels with color 1,0,0 from parsing. Restore them.
+
+    clearPadding( s.bmap );
 
     /* Save result */
     results.push_back( s );

@@ -86,19 +86,65 @@ void computeDistances( vector<pair<int,int> > & samples, double * norm_hist ){
 /* Choose a limited number of sample points */
 void chooseSamplePoints( cBitmap * bitmap, int num_points, double * norm_hist){
  vector<pair<int,int> > samples;
- int tries = 50;
  srand(time(NULL));
 
  for( int i = 0; i < num_points; i++ ){
   pair<int,int> coordinates = make_pair(0,0);
-  while( !chooseRandomPoint( bitmap, coordinates ) && tries ){ tries--; }
-  if( tries > 0 )
-   samples.push_back( coordinates );
+  while( !chooseRandomPoint( bitmap, coordinates ) ){}
+  samples.push_back( coordinates );
  }
+
+ /* Restore */
+ restoreImage( bitmap );
 
  /* Do distance stuff */
  computeDistances( samples, norm_hist );
 }
+
+void choosePointsUniform( cBitmap * bitmap, int num_points, double * norm_hist ){
+ vector<pair<int,int> > samples;
+ int ppc = ceil( num_points/bitmap->getHeight() );	//We want to have ppc pixels per column if possible
+ Pixel p;
+ srand(time(NULL));
+
+ if( num_points <= 0 ) return;
+
+ while( num_points > 0 ){
+  for( int i = 0; i < bitmap->getWidth(); i++ ){
+   int numpixel = 0;
+   //How many black pixels?
+   for( int j = 0; j < bitmap->getHeight(); j++ ){
+    bitmap->getPixel( i, j, p );
+    if( p.r != 0 ) continue;
+    numpixel++;
+   }
+
+   //Choose random pixels
+   for( int j = 0; j < bitmap->getHeight(); j++ ){
+    bitmap->getPixel( i, j, p );
+    if( p.r != 0 ) continue;
+    double chance = ppc/(double) numpixel;
+    if( rand()%100 <= chance*100 ){
+     samples.push_back( make_pair( i, j ) );
+     num_points--;
+     p.r = 1;
+     bitmap->setPixel( i, j, p );
+     if( num_points == 0 ) break;
+    }
+   }
+
+   if( num_points == 0 ) break;
+  }
+ }
+
+ /* Restore */
+ restoreImage( bitmap );
+
+ /* Do distance stuff */
+ computeDistances( samples, norm_hist );
+}
+
+
 
 double chiSquare( double * hist_a, double * hist_b, int size ){
  double sum = 0;
@@ -125,6 +171,10 @@ void chooseAllPoints( cBitmap * bitmap, double * norm_hist ){
    if( p.r == 0 ) samples.push_back( make_pair( i, j ) );
   }
  }
+
+ /* Restore */
+ restoreImage( bitmap );
+
  /* Do distance stuff */
  computeDistances( samples, norm_hist );
 }

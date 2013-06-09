@@ -1,5 +1,7 @@
 #include "subcomponents.hh"
 
+#define CUTOFF 12
+
 /* Very simple functions, might need some revamping */
 int parseVertical( cBitmap * b, int x, int y ){
  int ly = 0;
@@ -70,7 +72,7 @@ int countVerticalLines( cBitmap * bitmap ){
    if( p.r != 0 ) continue;
 
    length = parseVertical( copy, j, i );
-   if( length >= 10 ){
+   if( length >= CUTOFF ){
     numberOfLines++;
    }
   }
@@ -104,7 +106,7 @@ int countHorizontalLines( cBitmap * bitmap ){
 
    length = parseHorizontal( copy, i, j );
 
-   if( length >= 10 ){
+   if( length >= CUTOFF ){
     numberOfLines++;
    }
   }
@@ -113,15 +115,4 @@ int countHorizontalLines( cBitmap * bitmap ){
  delete copy;
 
  return numberOfLines;
-}
-
-int main( int argc, char ** argv ){
- if( argc != 2 ) return 0;
- cBitmap * bitmap = new cBitmap( argv[1] );
- quantizeBW( bitmap );
- //setup_matrix();
- cout << countVerticalLines( bitmap )/2 << endl;
- cout << countHorizontalLines( bitmap )/2 << endl;
-
-
 }

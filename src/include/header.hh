@@ -7,7 +7,9 @@
 #include <cmath>
 
 #include "Bitmap.hh"
+#include "boundary.hh"
 #include "viewer.hh"
+
 #include "../Decision/decision_clustering.hh"
 #include "../Segmentation/segmentation.hh"
 
@@ -16,6 +18,7 @@
 #include "../Features/euler.hh"
 #include "../Features/geometry.hh"
 #include "../Features/shapeContexts.hh"
+#include "../Features/subcomponents.hh"
 
 #include "../Preprocessing/resize.hh"
 

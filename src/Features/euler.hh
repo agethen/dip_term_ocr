@@ -23,4 +23,6 @@ int getNumberOfConnectedComponents( vector<CharacterComponent> & data );
 int getNumberOfLakes( vector<CharacterComponent> & data );
 
 void parseComponent( cBitmap * bitmap, int x, int y, CharacterComponent & c );
+
+void restoreImage( cBitmap * bitmap );
 #endif
