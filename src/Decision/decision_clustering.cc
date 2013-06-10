@@ -3,13 +3,29 @@
 using namespace std;
 
 void printClusteringResult( vector< pair<vector<double>, int> > & datapoints, vector< pair<vector<double>, unsigned char> > & centroids ){
+
  cout << "Recognized characters: " << endl;
  for( unsigned int i = 0; i < datapoints.size(); i++ ){
   cout << centroids[datapoints[i].second].second << " ";
+
+if( i%30 == 29 )
+ cout << endl;
+ }
+cout << endl;
+}
+
+void printClusteringResult( vector< pair<vector<double>, int> > & datapoints, vector< pair<vector<double>, unsigned char> > & centroids, char * actual ){
+ int errors = 0;
+ cout << "Recognized characters: " << endl;
+ for( unsigned int i = 0; i < datapoints.size(); i++ ){
+  cout << centroids[datapoints[i].second].second << " ";
+  if( centroids[datapoints[i].second].second != actual[i] ) errors++;
 if( i%25 == 24 )
  cout << endl;
  }
 cout << endl;
+
+cout << "Number of errors: " << errors << " (" << errors/(double)datapoints.size() << "%)" << endl;
 }
 
 //Compute distance between to vectors of same dimensionality
@@ -36,7 +52,7 @@ void simpleRecognizeCharacter(
 				vector< pair<vector<double>, int> > & datapoints, 
 				vector< pair<vector<double>, unsigned char> > & centroids, 
 				vector<double> & weights,
-				vector<double*> & shape_db, vector<double*> & shapes, double shape_weight ){
+				vector< vector<double*> > & shape_db, vector< vector<double*> > & shapes, double shape_weight ){
  if( datapoints.empty() || centroids.empty() )
   return;
 
@@ -48,10 +64,11 @@ void simpleRecognizeCharacter(
  for( unsigned int i = 0; i < datapoints.size(); i++ ){
   double distance = HUGE_VAL;				//Start with distance infinity (i.e., a very high value)
   int c = -1;
-  double * hist_shape = shapes[i];
+  vector<double *> hist_shape = shapes[i];
   
   for( unsigned int j = 0; j < centroids.size(); j++ ){
-   double shape_dist = chiSquare( hist_shape, shape_db[j], NUM_BINS )*shape_weight;
+   double shape_dist = bipartiteMatching( hist_shape, shape_db[j] )*shape_weight;//chiSquare( hist_shape, shape_db[j], NUM_BINS )*shape_weight;
+//cout << shape_dist << endl;
    double d = compute_distance( datapoints[i].first, centroids[j].first, weights )+shape_dist;
 
    if( d < distance ){

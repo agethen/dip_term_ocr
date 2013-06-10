@@ -22,7 +22,16 @@
 
 #include "../Preprocessing/resize.hh"
 
-#define NUM_BINS 10
+#ifdef __MACOS__
+#include <GLUT/glut.h>
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
+#include <GL/glut.h>
+#endif
+
+
+#define NUM_BINS 5
 
 using namespace std;
 

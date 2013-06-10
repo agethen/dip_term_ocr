@@ -1,5 +1,5 @@
 #include "boundary.hh"
-
+#include "viewer.hh"
 void erodeImage( cBitmap * image, cBitmap * result, int masksize ){
 
  Pixel p;
@@ -64,3 +64,19 @@ void extractBoundary( cBitmap * image, cBitmap * result ){
   }
  }
 }
+#ifdef TSET
+int main( int argc, char ** argv){
+ cBitmap * b = new cBitmap("../../Letters/A.bmp");
+ extractBoundary( b, b );
+
+ 	//Just for testing
+cBitmap * character = b;
+	unsigned char * t = (unsigned char*) malloc( character->getWidth()*character->getHeight()*sizeof( struct Pixel ) );
+	character->getBitmap( t, character->getWidth()*character->getHeight()*sizeof( struct Pixel ) );
+	glutViewer( t, character->getWidth(), character->getHeight(), argc, argv, 400, 400 );
+	free( t );
+
+
+ return 0;
+}
+#endif
