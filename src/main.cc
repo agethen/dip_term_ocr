@@ -19,7 +19,7 @@ char trainingset_files[36][24] =
  { PATH_PREFIX"/W.bmp\0" }, { PATH_PREFIX"/X.bmp\0" }, { PATH_PREFIX"/Y.bmp\0" }, { PATH_PREFIX"/Z.bmp\0" },
 };
 
-vector<double*> hist_database;
+vector< vector<double*> > hist_database;
 
 
 void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
@@ -39,8 +39,8 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
 
   /* Compute all features. Keep the order! */
   /* Shape Contexts */
-  double * hist = (double*) malloc( NUM_BINS*sizeof( double ) );
-  choosePointsUniform( character, 100, hist );
+  vector<double *> hist;
+  choosePointsUniform( character, 50, hist );
   hist_database.push_back( hist );
 
   /* Counts black pixels */
@@ -80,15 +80,15 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
 
 
 int main( int argc, char ** argv ){
- if( argc != 3 ) exit(1);
+ if( argc != 2 ) exit(1);
 
  vector<Segment> segments;
  vector< pair<vector<double>,int> > datapoints;
- vector<double*> shapes;
+ vector< vector<double*> > shapes;
  vector< pair<vector<double>,unsigned char> > centroids;
  vector<double> weights;
 
- const double shape_weight = 50;
+ const double shape_weight = 75;
 
  bitmap = new cBitmap( argv[1] );
  
@@ -114,8 +114,8 @@ int main( int argc, char ** argv ){
   resizeImage( segments[i].bmap, 32, 32 );		//Training data is 32x32
 
   /* Compute features */
-  double * hist = (double*) malloc( NUM_BINS*sizeof( double ) );
-  choosePointsUniform( segments[i].bmap, 100, hist );
+  vector<double *> hist;
+  choosePointsUniform( segments[i].bmap, 50, hist );
   shapes.push_back( hist );
 
   /* Order ABSOLUTELY needs to be the same as in training (Can we maybe write a common function for this?) */
@@ -181,10 +181,15 @@ int main( int argc, char ** argv ){
  glutViewer( t, testme->getWidth(), testme->getHeight(), argc, argv, 400, 400 );
  free( t );
 #endif
+
  //Do clustering
  simpleRecognizeCharacter( datapoints, centroids, weights, hist_database, shapes, shape_weight );
 
  //Print result ;)
+ //For demo purposes, actual string here:
+ //char actual[256] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+ 
+ //printClusteringResult( datapoints, centroids, actual );
  printClusteringResult( datapoints, centroids );
  return 0;
 }

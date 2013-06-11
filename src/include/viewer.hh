@@ -1,6 +1,8 @@
 #ifndef __VIEWER_HH__
 #define __VIEWER_HH__
 
+#include "header.hh"
+
 /* Call this function to display an image */
 /* @b: image buffer. Expected size is w*h*4 */
 /* @w: Width of image */

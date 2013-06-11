@@ -3,9 +3,13 @@
 
 #include "../include/header.hh"
 
+#define CUTOFF 12
+#define CUTOFF_DIA 12
 /* Functions are pretty explanatory */
-/* Remember to call setup_matrix() from include/setup.cc first! */
+//Uses boundary instead of skeleton at
 int countVerticalLines( cBitmap * bitmap );
 int countHorizontalLines( cBitmap * bitmap );
 
+/* Count diagonals. TODO: Not as stable as functions above */
+int countDiagonals( cBitmap * bitmap );
 #endif
