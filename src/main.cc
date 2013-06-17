@@ -73,6 +73,12 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   f.push_back( f_coord.first );
   f.push_back( f_coord.second );
 
+  /* Compute Bays and Lakes */
+  //commented for now cause i dont want to screw your code up :D
+  //vector<double> results = findBaysLakes(character);
+  //f.push_back(results.at(0));
+  //f.push_back(results.at(1));
+  
   centroids.push_back( make_pair( f, (unsigned char) trainingset_files[i][pos] ) );
  }
 
@@ -165,7 +171,12 @@ int main( int argc, char ** argv ){
   f.push_back( f_coord.second );
   weights.push_back( 15 );
 
-
+  /* Compute Bays and Lakes */
+  //commented for now cause i dont want to screw your code up :D
+  //vector<double> results = findBaysLakes(segments[i].bmap);
+  //f.push_back(results.at(0));
+  //f.push_back(results.at(1));
+  
   //Save datapoint
   datapoints.push_back( make_pair( f, 0 ) ); //Second value is not important atm.
  }

@@ -19,6 +19,7 @@
 #include "../Features/geometry.hh"
 #include "../Features/shapeContexts.hh"
 #include "../Features/subcomponents.hh"
+#include "../Features/BaysLakes.hh"
 
 #include "../Preprocessing/resize.hh"
 
