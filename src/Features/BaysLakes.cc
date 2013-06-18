@@ -13,7 +13,7 @@ vector<double> findBaysLakes(cBitmap * bm) {
 	vector<double> output;
 	colors = initialiseColors();
 	countX=0;
-	Pixel p;
+
 
 	// first copy it!
 	unsigned char * buffer = (unsigned char *) malloc( bm->getWidth()*bm->getHeight()*sizeof(Pixel) );
@@ -31,7 +31,7 @@ vector<double> findBaysLakes(cBitmap * bm) {
 	//convex->saveBitmap( "resultBL.bmp" );
 	output.push_back(0);
 	output.push_back(0);
-	for(int i=0;i<result.size();i++){
+	for(unsigned int i=0;i<result.size();i++){
 		output[result[i]]++;
 	}
 	return output;
@@ -98,9 +98,9 @@ void tagBorders(cBitmap* myBitmap){
 	Pixel p;
 
 	// find border: tag with 'alpha' value = 1
-	vector<vector<int>> borderHorz;
+	vector<vector<int> > borderHorz;
 	borderHorz.resize(myBitmap->getHeight());
-	vector<vector<int>> borderVert;
+	vector<vector<int> > borderVert;
 	borderVert.resize(myBitmap->getWidth());
 
 	for( int i = 0; i < myBitmap->getHeight(); i++ ){
@@ -124,7 +124,7 @@ void tagBorders(cBitmap* myBitmap){
 		}
 	}
 
-	for( int i=0; i <borderHorz.size(); i++){
+	for( unsigned int i=0; i <borderHorz.size(); i++){
 		if(borderHorz[i][0] == -1) continue;
 		myBitmap->getPixel(borderHorz[i][0],i, p);
 		p.b = 64; // TAG border
@@ -133,7 +133,7 @@ void tagBorders(cBitmap* myBitmap){
 		p.b = 64; // TAG border
 		myBitmap->setPixel(borderHorz[i][1],i, p);
 	}
-	for( int i=0; i <borderVert.size(); i++){
+	for( unsigned int i=0; i <borderVert.size(); i++){
 		if(borderVert[i][0] == -1) continue;
 		myBitmap->getPixel(i, borderVert[i][0], p);
 		p.b = 64; // TAG border 
@@ -146,7 +146,7 @@ void tagBorders(cBitmap* myBitmap){
 
 void myExhaustiveConvexHull(cBitmap* myBitmap ){
 struct Pixel p;
-int count2 = 0;
+
 for( int i = 0; i < myBitmap->getWidth(); i++ ){
  for( int j = 0; j < myBitmap->getHeight(); j++ ){
   myBitmap->getPixel( i, j, p );
