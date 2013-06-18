@@ -73,6 +73,12 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
   f.push_back( f_coord.first );
   f.push_back( f_coord.second );
 
+  /* Compute Bays and Lakes */
+  //commented for now cause i dont want to screw your code up :D
+  //vector<double> results = findBaysLakes(character);
+  //f.push_back(results.at(0));
+  //f.push_back(results.at(1));
+  
   centroids.push_back( make_pair( f, (unsigned char) trainingset_files[i][pos] ) );
  }
 
@@ -80,7 +86,17 @@ void buildDatabase( vector< pair<vector<double>,unsigned char> > & centroids ){
 
 
 int main( int argc, char ** argv ){
- if( argc != 2 ) exit(1);
+ if( argc != 2 && argc != 4 ) exit(1);
+ unsigned int out_max_i = 0;
+ unsigned int dis_i = 0;
+
+ if( argc == 4 ){
+  if( strcmp( argv[2], "features" ) == 0 )
+   sscanf( argv[3], "%d", &out_max_i );
+  if( strcmp( argv[2], "show" ) == 0 )
+   sscanf( argv[3], "%d", &dis_i );
+
+ }
 
  vector<Segment> segments;
  vector< pair<vector<double>,int> > datapoints;
@@ -126,34 +142,44 @@ int main( int argc, char ** argv ){
   feature = getEulerNumber( segments[i].bmap );		//Euler feature. Relative stable -> High weight
   f.push_back( feature );
   weights.push_back( 50.0 );
+  if( i < out_max_i )
+   cout << "E: " << feature;
 
   /* Circles */
 
   feature = countCircles( segments[i].bmap );
   f.push_back( feature );
   weights.push_back( 10.0 );
+  if( i < out_max_i )
+   cout << "\tC: " << feature;
 
   /* Straight lines */
   feature = countVerticalLines( segments[i].bmap );
   f.push_back( feature );
   weights.push_back( 30.0 );
+  if( i < out_max_i )
+   cout << "\tL (V): " << feature;
 
   feature = countHorizontalLines( segments[i].bmap );
   f.push_back( feature );
   weights.push_back( 30.0 );
-
+  if( i < out_max_i )
+   cout << "\tL (H): " << feature;
 
   /* Compute Geometry */
 
   computeGeometry( segments[i].bmap );
 
-  f.push_back( getAverageDistance() );
+  feature = getAverageDistance();
+  f.push_back( feature );
   weights.push_back( 5 );
 
-  f.push_back( getMaximumDistance() );
+  feature = getMaximumDistance();
+  f.push_back( feature );
   weights.push_back( 5 );
 
-  f.push_back( getArea() );
+  feature = getArea();
+  f.push_back( feature );
   weights.push_back( 1 );
 
   pair<int,int> f_coord = make_pair( 0,0 );
@@ -165,30 +191,40 @@ int main( int argc, char ** argv ){
   f.push_back( f_coord.second );
   weights.push_back( 15 );
 
+  if( i < out_max_i )
+   cout << "\tCenter: (" << f_coord.first << "," << f_coord.second << ")";
+
+  if( i < out_max_i )
+   cout << endl;
+
+  /* Compute Bays and Lakes */
+  //commented for now cause i dont want to screw your code up :D
+  //vector<double> results = findBaysLakes(segments[i].bmap);
+  //f.push_back(results.at(0));
+  //f.push_back(results.at(1));
 
   //Save datapoint
   datapoints.push_back( make_pair( f, 0 ) ); //Second value is not important atm.
  }
 
 
-#ifdef TESTING
- /* Just for testing */
- int indexno = 0;
- sscanf( argv[2], "%d", &indexno );
- cBitmap * testme = segments[indexno].bmap;
- unsigned char * t = (unsigned char*) malloc( testme->getWidth()*testme->getHeight()*sizeof( struct Pixel ) );
- testme->getBitmap( t, testme->getWidth()*testme->getHeight()*sizeof( struct Pixel ) );
- glutViewer( t, testme->getWidth(), testme->getHeight(), argc, argv, 400, 400 );
- free( t );
-#endif
-
+ if( dis_i > 0 ){
+  /* Just for testing */
+  int indexno = dis_i - 1;
+  sscanf( argv[2], "%d", &indexno );
+  cBitmap * testme = segments[indexno].bmap;
+  unsigned char * t = (unsigned char*) malloc( testme->getWidth()*testme->getHeight()*sizeof( struct Pixel ) );
+  testme->getBitmap( t, testme->getWidth()*testme->getHeight()*sizeof( struct Pixel ) );
+  glutViewer( t, testme->getWidth(), testme->getHeight(), argc, argv, 400, 400 );
+  free( t );
+ }
  //Do clustering
  simpleRecognizeCharacter( datapoints, centroids, weights, hist_database, shapes, shape_weight );
 
  //Print result ;)
  //For demo purposes, actual string here:
  //char actual[256] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
- 
+
  //printClusteringResult( datapoints, centroids, actual );
  printClusteringResult( datapoints, centroids );
  return 0;
