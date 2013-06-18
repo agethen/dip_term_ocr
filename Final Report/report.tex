@@ -116,6 +116,29 @@ By calculation,
 \rightarrow \theta=\arctan{\left[ \frac{\lambda_M - U(0,2)}{U(1,1)} \right] }
 \end{multline}
 
+\subsubsection{Convex Hull}
+\label{sec:convexhull}
+
+We define the \textit{Convex Hull} of a character as follows: Given that the input is already quantized to black-and-white, where white is the background, any point that is on a line between any two black points has to be black, too. More formally, this can be expressed as:
+
+\begin{align}
+&\forall v_1, \forall v_2 \in \text{B}: v_t \in \text{C},
+&v_t = (1-t)v_1 + t v_2, t \in [0,1]
+\end{align}
+where $B$ is the set of black pixels and $C$ is the Convex Hull. An example can be found in Figure \ref{fig:convex} for the character 'X'.
+
+\begin{figure}
+ \centering
+  \subfigure[]{
+  \includegraphics{images/X.png}
+ }
+ \subfigure[]{
+  \includegraphics{images/X_convex.png}
+ }
+\caption{Convex Hull for the character 'X'. a) Original character, b) Convex Hull of character}
+\label{fig:convex}
+\end{figure}
+
 \subsection{Features}
 In the following we present each feature we used in detail.
 
@@ -144,7 +167,7 @@ d = \sqrt{\frac{\sum_{i,j}(x_{i,j} - F_c)}{\sum_{i,j}x_{i,j}}}
 \label{sec:lakeseuler}
 Each character posseses a property called the \textit{Euler number}, which we define as the number of \textit{Connected Components} minus the number of \textit{Lakes}.
 
-In a bitmap that consists of only two colors (e.g., black-and-white), we define a \textit{Lake} to be a connected area which does not reach the bitmap borders and is colored with the background color (e.g., white). A related term, the \textit{Bay} is defined to be a connected area of background color that does touch the bitmap borders. The last term is that of a \textit{Connected Component}. For our purposes it will describe any connected area of non-background color (e.g., black). An example for each term is given in Figures \ref{fig:bayslakescomp} a) to d) with the capital character 'A' .
+In a bitmap that consists of only two colors (e.g., black-and-white), we define a \textit{Lake} to be a connected area which does not reach the borders of the \textit{Convex Hull} (see Section \ref{sec:convexhull}) and is colored with the background color (e.g., white). A related term, the \textit{Bay} is defined to be a connected area of background color that does touch the borders of the \textit{Convex Hull}. The last term is that of a \textit{Connected Component}. For our purposes it will describe any connected area of non-background color (e.g., black). An example for each term is given in Figures \ref{fig:bayslakescomp} a) to d) with the capital character 'A' .
 
 \begin{figure}
  \centering
