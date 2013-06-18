@@ -203,6 +203,7 @@ int main( int argc, char ** argv ){
   //f.push_back(results.at(0));
   //f.push_back(results.at(1));
 
+
   //Save datapoint
   datapoints.push_back( make_pair( f, 0 ) ); //Second value is not important atm.
  }

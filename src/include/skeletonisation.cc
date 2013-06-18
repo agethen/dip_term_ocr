@@ -2,7 +2,7 @@
 
 #include "setup.hh"
 
-#include "viewer.hh"
+//#include "viewer.hh"
 
 using namespace std;
 
@@ -10,7 +10,7 @@ extern int * x_map;
 extern int * hash_lut_hit;
 extern int * hash_lut_M;
 extern int * hash_lut_bridge;
-
+extern int * hash_lut_cross;
 
 hit_miss::hit_miss( cBitmap * bitmap )
 {
@@ -207,7 +207,125 @@ void hit_miss::getShrunk(unsigned char* input, int w, int h)
 		return;
 	}
 }
+void hit_miss::crosser()
+{
+	vector <int> crossers;
+	for(int i = 0; i < height; i++)
+	{
+		for(int j = 0; j < width; j++)
+		{
+			if(buf[i * width + j])
+			{
+				int count = 0;
+				for(int k = -1; k < 2; k++)
+					for(int l = -1; l < 2; l++)
+					{
+						if(((i + k) >= 0) && ((i + k) < height) && ((j + l) >= 0) && ((j + l) < width))
+						{
+							count += x_map[(k + 1) * 3 + l + 1] * (int)buf[(i + k) * width + j + l];
+						}
+					}
+				if(hash_lut_cross[count])
+				{
+					crossers.push_back(i * width + j);
+				}
+			}
+		}
+	}
+	check_cross(crossers);
+	return;	
+}
+void hit_miss::check_cross(vector<int> crossers)
+{
 
+	while(crossers.size() != 0)
+	{
+		vector <int> tmp;
+		int x = crossers[0] / width, y = crossers[0] % width;
+		tmp.push_back(crossers[0]);
+		for(int j = 1; j < crossers.size(); j++)
+		{
+
+			int len = sqrt((x - crossers[j] / width) * (x - crossers[j] / width) + (y - crossers[j] % width) * (y - crossers[j] % width));
+			if(len <= 5.0)
+			{
+				tmp.push_back(crossers[j]);
+				crossers.erase(crossers.begin() + j);
+				j--;
+			}
+		}
+		crossers.erase(crossers.begin());
+		
+		clusters.push_back(tmp);
+	} 
+	/*
+	for(int i = 0; i < clusters.size(); i++)
+	{
+		if(clusters[i].size() == 1)
+		{
+			int counter = 0, line = 0;
+			for(int j = -1; j < 2; j++)
+				for(int k = -1; k < 2; k++)
+				{
+					int tmp = (clusters[i][0] / width + j) * width + (clusters[i][0] % width + k);
+					
+					if((buf[tmp]) && ((j != 0) || (k != 0)))
+					{
+						line ++;
+						M[clusters[i][0]] = 1;
+						int ll = iter(i, clusters[i][0], tmp);
+						if(ll < 5)
+						{
+							counter ++;
+						}
+					}
+				}
+			if((line - counter) == 1)
+			{
+				clusters.erase(clusters.begin() + i);
+				i--;
+			}
+		}
+	}*/
+	for(int i = 0; i < clusters.size(); i++)
+	{
+		for(int j = 0; j < clusters[i].size(); j++)
+		{
+			fprintf(stderr, "%d ", clusters[i][j]);
+		}
+		fprintf(stderr, "\n");
+	}
+	return;
+}
+int hit_miss::iter(int pile, int prev, int pos)
+{
+	
+	for(int i = 0; i < clusters.size(); i++)
+	{
+		if(i != pile)
+		{
+			for(int j = 0; j < clusters[i].size(); j++)
+			{
+				if(clusters[i][j] == pos)
+					return 1;
+			}
+		}
+	}
+	for(int i = -1; i < 2; i++)
+		for(int j = -1; j < 2; j++)
+		{
+			if((i != 0) || (j != 0))
+			{
+				int tmp = (pos / width + i) * width + (pos % width + j);
+				if((buf[tmp]) && (tmp != prev) && (M[tmp] != 1))
+				{
+					M[tmp] = 1;
+					return 1 + iter(pile, pos, tmp);
+				}
+			}
+		}
+	return 1;
+}
 void hit_miss::exportToBitmap( cBitmap * target ){
  Pixel p;
 
@@ -234,8 +352,8 @@ void hit_miss::exportToBitmap( cBitmap * target ){
  }
 }
 
-
 /*
+
 int main( int argc, char ** argv)
 {
 	char filename[64];
@@ -263,10 +381,10 @@ int main( int argc, char ** argv)
 
 	Kick.Bridge();
 	Kick.shift();
-
-
+	Kick.show();
+	Kick.crosser();
 	Kick.exportToBitmap( character );
-
+	
 	//Just for testing
 	unsigned char * t = (unsigned char*) malloc( character->getWidth()*character->getHeight()*sizeof( struct Pixel ) );
 	character->getBitmap( t, character->getWidth()*character->getHeight()*sizeof( struct Pixel ) );
@@ -275,4 +393,5 @@ int main( int argc, char ** argv)
 
 	delete character;
 }
+
 */

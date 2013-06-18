@@ -6,11 +6,13 @@ unsigned char ***hit_matrices;
 vector<int> num;
 unsigned char ***M_pattern;
 vector<int> M_num;
+unsigned char ***C_pattern;
+vector<int> C_num;
 int *x_map = new int[9];
 int *hash_lut_hit = new int[512];
 int *hash_lut_M = new int[512];
 int *hash_lut_bridge = new int[512];
-
+int *hash_lut_cross = new int[512];
 bool isInitialized = false;
 
 void setup_matrix()
@@ -37,75 +39,6 @@ void setup_matrix()
 	}
 
 
-	/*hit_matrices[0][0][0] = 0;	hit_matrices[0][0][1] = 0;	hit_matrices[0][0][2] = 1;
-	hit_matrices[0][0][3] = 0;	hit_matrices[0][0][4] = 1;	hit_matrices[0][0][5] = 0;
-	hit_matrices[0][0][6] = 0;	hit_matrices[0][0][7] = 0;	hit_matrices[0][0][8] = 0;
-
-	hit_matrices[0][1][0] = 1;	hit_matrices[0][1][1] = 0;	hit_matrices[0][1][2] = 0;
-	hit_matrices[0][1][3] = 0;	hit_matrices[0][1][4] = 1;	hit_matrices[0][1][5] = 0;
-	hit_matrices[0][1][6] = 0;	hit_matrices[0][1][7] = 0;	hit_matrices[0][1][8] = 0;
-
-	hit_matrices[0][2][0] = 0;	hit_matrices[0][2][1] = 0;	hit_matrices[0][2][2] = 0;
-	hit_matrices[0][2][3] = 0;	hit_matrices[0][2][4] = 1;	hit_matrices[0][2][5] = 0;
-	hit_matrices[0][2][6] = 1;	hit_matrices[0][2][7] = 0;	hit_matrices[0][2][8] = 0;
-
-	hit_matrices[0][3][0] = 0;	hit_matrices[0][3][1] = 0;	hit_matrices[0][3][2] = 0;
-	hit_matrices[0][3][3] = 0;	hit_matrices[0][3][4] = 1;	hit_matrices[0][3][5] = 0;
-	hit_matrices[0][3][6] = 0;	hit_matrices[0][3][7] = 0;	hit_matrices[0][3][8] = 1;*/
-
-
-
-
-	/*hit_matrices[1][0][0] = 0;	hit_matrices[1][0][1] = 0;	hit_matrices[1][0][2] = 0;
-	hit_matrices[1][0][3] = 0;	hit_matrices[1][0][4] = 1;	hit_matrices[1][0][5] = 1;
-	hit_matrices[1][0][6] = 0;	hit_matrices[1][0][7] = 0;	hit_matrices[1][0][8] = 0;
-
-	hit_matrices[1][1][0] = 0;	hit_matrices[1][1][1] = 1;	hit_matrices[1][1][2] = 0;
-	hit_matrices[1][1][3] = 0;	hit_matrices[1][1][4] = 1;	hit_matrices[1][1][5] = 0;
-	hit_matrices[1][1][6] = 0;	hit_matrices[1][1][7] = 0;	hit_matrices[1][1][8] = 0;
-
-	hit_matrices[1][2][0] = 0;	hit_matrices[1][2][1] = 0;	hit_matrices[1][2][2] = 0;
-	hit_matrices[1][2][3] = 1;	hit_matrices[1][2][4] = 1;	hit_matrices[1][2][5] = 0;
-	hit_matrices[1][2][6] = 0;	hit_matrices[1][2][7] = 0;	hit_matrices[1][2][8] = 0;
-
-	hit_matrices[1][3][0] = 0;	hit_matrices[1][3][1] = 0;	hit_matrices[1][3][2] = 0;
-	hit_matrices[1][3][3] = 0;	hit_matrices[1][3][4] = 1;	hit_matrices[1][3][5] = 0;
-	hit_matrices[1][3][6] = 0;	hit_matrices[1][3][7] = 1;	hit_matrices[1][3][8] = 0;*/
-
-
-
-
-	/*hit_matrices[2][0][0] = 0;	hit_matrices[2][0][1] = 0;	hit_matrices[2][0][2] = 1;
-	hit_matrices[2][0][3] = 0;	hit_matrices[2][0][4] = 1;	hit_matrices[2][0][5] = 1;
-	hit_matrices[2][0][6] = 0;	hit_matrices[2][0][7] = 0;	hit_matrices[2][0][8] = 0;
-
-	hit_matrices[2][1][0] = 0;	hit_matrices[2][1][1] = 1;	hit_matrices[2][1][2] = 1;
-	hit_matrices[2][1][3] = 0;	hit_matrices[2][1][4] = 1;	hit_matrices[2][1][5] = 0;
-	hit_matrices[2][1][6] = 0;	hit_matrices[2][1][7] = 0;	hit_matrices[2][1][8] = 0;
-
-	hit_matrices[2][2][0] = 1;	hit_matrices[2][2][1] = 1;	hit_matrices[2][2][2] = 0;
-	hit_matrices[2][2][3] = 0;	hit_matrices[2][2][4] = 1;	hit_matrices[2][2][5] = 0;
-	hit_matrices[2][2][6] = 0;	hit_matrices[2][2][7] = 0;	hit_matrices[2][2][8] = 0;
-
-	hit_matrices[2][3][0] = 1;	hit_matrices[2][3][1] = 0;	hit_matrices[2][3][2] = 0;
-	hit_matrices[2][3][3] = 1;	hit_matrices[2][3][4] = 1;	hit_matrices[2][3][5] = 0;
-	hit_matrices[2][3][6] = 0;	hit_matrices[2][3][7] = 0;	hit_matrices[2][3][8] = 0;
-
-	hit_matrices[2][4][0] = 0;	hit_matrices[2][4][1] = 0;	hit_matrices[2][4][2] = 0;
-	hit_matrices[2][4][3] = 1;	hit_matrices[2][4][4] = 1;	hit_matrices[2][4][5] = 0;
-	hit_matrices[2][4][6] = 1;	hit_matrices[2][4][7] = 0;	hit_matrices[2][4][8] = 0;
-
-	hit_matrices[2][5][0] = 0;	hit_matrices[2][5][1] = 0;	hit_matrices[2][5][2] = 0;
-	hit_matrices[2][5][3] = 0;	hit_matrices[2][5][4] = 1;	hit_matrices[2][5][5] = 0;
-	hit_matrices[2][5][6] = 1;	hit_matrices[2][5][7] = 1;	hit_matrices[2][5][8] = 0;
-
-	hit_matrices[2][6][0] = 0;	hit_matrices[2][6][1] = 0;	hit_matrices[2][6][2] = 0;
-	hit_matrices[2][6][3] = 0;	hit_matrices[2][6][4] = 1;	hit_matrices[2][6][5] = 0;
-	hit_matrices[2][6][6] = 0;	hit_matrices[2][6][7] = 1;	hit_matrices[2][6][8] = 1;
-
-	hit_matrices[2][7][0] = 0;	hit_matrices[2][7][1] = 0;	hit_matrices[2][7][2] = 0;
-	hit_matrices[2][7][3] = 0;	hit_matrices[2][7][4] = 1;	hit_matrices[2][7][5] = 1;
-	hit_matrices[2][7][6] = 0;	hit_matrices[2][7][7] = 0;	hit_matrices[2][7][8] = 1;*/
 
 
 
@@ -145,49 +78,6 @@ void setup_matrix()
 
 
 
-	/*hit_matrices[4][0][0] = 1;	hit_matrices[4][0][1] = 1;	hit_matrices[4][0][2] = 0;
-	hit_matrices[4][0][3] = 0;	hit_matrices[4][0][4] = 1;	hit_matrices[4][0][5] = 1;
-	hit_matrices[4][0][6] = 0;	hit_matrices[4][0][7] = 0;	hit_matrices[4][0][8] = 0;
-
-	hit_matrices[4][1][0] = 0;	hit_matrices[4][1][1] = 1;	hit_matrices[4][1][2] = 0;
-	hit_matrices[4][1][3] = 0;	hit_matrices[4][1][4] = 1;	hit_matrices[4][1][5] = 1;
-	hit_matrices[4][1][6] = 0;	hit_matrices[4][1][7] = 0;	hit_matrices[4][1][8] = 1;
-
-	hit_matrices[4][2][0] = 0;	hit_matrices[4][2][1] = 1;	hit_matrices[4][2][2] = 1;
-	hit_matrices[4][2][3] = 1;	hit_matrices[4][2][4] = 1;	hit_matrices[4][2][5] = 0;
-	hit_matrices[4][2][6] = 0;	hit_matrices[4][2][7] = 0;	hit_matrices[4][2][8] = 0;
-
-	hit_matrices[4][3][0] = 0;	hit_matrices[4][3][1] = 0;	hit_matrices[4][3][2] = 1;
-	hit_matrices[4][3][3] = 0;	hit_matrices[4][3][4] = 1;	hit_matrices[4][3][5] = 1;
-	hit_matrices[4][3][6] = 0;	hit_matrices[4][3][7] = 1;	hit_matrices[4][3][8] = 0;
-
-	hit_matrices[4][4][0] = 0;	hit_matrices[4][4][1] = 1;	hit_matrices[4][4][2] = 1;
-	hit_matrices[4][4][3] = 0;	hit_matrices[4][4][4] = 1;	hit_matrices[4][4][5] = 1;
-	hit_matrices[4][4][6] = 0;	hit_matrices[4][4][7] = 0;	hit_matrices[4][4][8] = 0;
-
-	hit_matrices[4][5][0] = 1;	hit_matrices[4][5][1] = 1;	hit_matrices[4][5][2] = 0;
-	hit_matrices[4][5][3] = 1;	hit_matrices[4][5][4] = 1;	hit_matrices[4][5][5] = 0;
-	hit_matrices[4][5][6] = 0;	hit_matrices[4][5][7] = 0;	hit_matrices[4][5][8] = 0;
-
-	hit_matrices[4][6][0] = 0;	hit_matrices[4][6][1] = 0;	hit_matrices[4][6][2] = 0;
-	hit_matrices[4][6][3] = 1;	hit_matrices[4][6][4] = 1;	hit_matrices[4][6][5] = 0;
-	hit_matrices[4][6][6] = 1;	hit_matrices[4][6][7] = 1;	hit_matrices[4][6][8] = 0;
-
-
-	hit_matrices[4][7][0] = 0;	hit_matrices[4][7][1] = 0;	hit_matrices[4][7][2] = 0;
-	hit_matrices[4][7][3] = 0;	hit_matrices[4][7][4] = 1;	hit_matrices[4][7][5] = 1;
-	hit_matrices[4][7][6] = 0;	hit_matrices[4][7][7] = 1;	hit_matrices[4][7][8] = 1;*/
-
-
-
-
-	/*hit_matrices[5][0][0] = 1;	hit_matrices[5][0][1] = 1;	hit_matrices[5][0][2] = 0;
-	hit_matrices[5][0][3] = 0;	hit_matrices[5][0][4] = 1;	hit_matrices[5][0][5] = 1;
-	hit_matrices[5][0][6] = 0;	hit_matrices[5][0][7] = 0;	hit_matrices[5][0][8] = 1;
-
-	hit_matrices[5][1][0] = 0;	hit_matrices[5][1][1] = 1;	hit_matrices[5][1][2] = 1;
-	hit_matrices[5][1][3] = 1;	hit_matrices[5][1][4] = 1;	hit_matrices[5][1][5] = 0;
-	hit_matrices[5][1][6] = 1;	hit_matrices[5][1][7] = 0;	hit_matrices[5][1][8] = 0;*/
 
 	hit_matrices[5][2][0] = 1;	hit_matrices[5][2][1] = 1;	hit_matrices[5][2][2] = 1;
 	hit_matrices[5][2][3] = 0;	hit_matrices[5][2][4] = 1;	hit_matrices[5][2][5] = 1;
@@ -2685,6 +2575,323 @@ void setup_matrix()
 		}
 		delete[] M_pattern[i];
 	}
+
+
+
+
+
+
+	C_num.push_back(5);		C_num.push_back(16);	C_num.push_back(12);	C_num.push_back(2);
+	memset(hash_lut_cross, 0, 512 * sizeof(int));
+	C_pattern = new unsigned char**[C_num.size()];
+	for(int i = 0; i < C_num.size(); i++) 
+	{
+		C_pattern[i] = new unsigned char *[C_num[i]];
+		for(int j = 0; j < C_num[i]; j++)
+		{
+			C_pattern[i][j] = new unsigned char[9];
+			memset(C_pattern[i][j], 0, 9 * sizeof(unsigned char));
+		}
+	}
+	C_pattern[0][0][0] = 0;	C_pattern[0][0][1] = 1;	C_pattern[0][0][2] = 0;
+	C_pattern[0][0][3] = 1;	C_pattern[0][0][4] = 1;	C_pattern[0][0][5] = 1;
+	C_pattern[0][0][6] = 0;	C_pattern[0][0][7] = 1;	C_pattern[0][0][8] = 0;
+
+
+
+
+
+	C_pattern[0][1][0] = 0;	C_pattern[0][1][1] = 1;	C_pattern[0][1][2] = 0;
+	C_pattern[0][1][3] = 1;	C_pattern[0][1][4] = 1;	C_pattern[0][1][5] = 1;
+	C_pattern[0][1][6] = 0;	C_pattern[0][1][7] = 0;	C_pattern[0][1][8] = 0;
+
+
+
+
+
+	C_pattern[0][2][0] = 0;	C_pattern[0][2][1] = 1;	C_pattern[0][2][2] = 0;
+	C_pattern[0][2][3] = 1;	C_pattern[0][2][4] = 1;	C_pattern[0][2][5] = 0;
+	C_pattern[0][2][6] = 0;	C_pattern[0][2][7] = 1;	C_pattern[0][2][8] = 0;
+
+
+
+
+
+	C_pattern[0][3][0] = 0;	C_pattern[0][3][1] = 1;	C_pattern[0][3][2] = 0;
+	C_pattern[0][3][3] = 0;	C_pattern[0][3][4] = 1;	C_pattern[0][3][5] = 1;
+	C_pattern[0][3][6] = 0;	C_pattern[0][3][7] = 1;	C_pattern[0][3][8] = 0;
+
+
+
+
+
+	C_pattern[0][4][0] = 0;	C_pattern[0][4][1] = 0;	C_pattern[0][4][2] = 0;
+	C_pattern[0][4][3] = 1;	C_pattern[0][4][4] = 1;	C_pattern[0][4][5] = 1;
+	C_pattern[0][4][6] = 0;	C_pattern[0][4][7] = 1;	C_pattern[0][4][8] = 0;
+
+
+
+
+
+	C_pattern[1][0][0] = 0;	C_pattern[1][0][1] = 1;	C_pattern[1][0][2] = 0;
+	C_pattern[1][0][3] = 1;	C_pattern[1][0][4] = 1;	C_pattern[1][0][5] = 0;
+	C_pattern[1][0][6] = 0;	C_pattern[1][0][7] = 0;	C_pattern[1][0][8] = 1;
+
+
+
+
+
+	C_pattern[1][1][0] = 0;	C_pattern[1][1][1] = 1;	C_pattern[1][1][2] = 0;
+	C_pattern[1][1][3] = 0;	C_pattern[1][1][4] = 1;	C_pattern[1][1][5] = 1;
+	C_pattern[1][1][6] = 1;	C_pattern[1][1][7] = 0;	C_pattern[1][1][8] = 0;
+
+
+
+
+
+	C_pattern[1][2][0] = 1;	C_pattern[1][2][1] = 0;	C_pattern[1][2][2] = 0;
+	C_pattern[1][2][3] = 0;	C_pattern[1][2][4] = 1;	C_pattern[1][2][5] = 1;
+	C_pattern[1][2][6] = 0;	C_pattern[1][2][7] = 1;	C_pattern[1][2][8] = 0;
+
+
+
+
+
+	C_pattern[1][3][0] = 0;	C_pattern[1][3][1] = 0;	C_pattern[1][3][2] = 1;
+	C_pattern[1][3][3] = 1;	C_pattern[1][3][4] = 1;	C_pattern[1][3][5] = 0;
+	C_pattern[1][3][6] = 0;	C_pattern[1][3][7] = 1;	C_pattern[1][3][8] = 0;
+
+
+
+
+
+	C_pattern[1][4][0] = 0;	C_pattern[1][4][1] = 1;	C_pattern[1][4][2] = 0;
+	C_pattern[1][4][3] = 1;	C_pattern[1][4][4] = 1;	C_pattern[1][4][5] = 0;
+	C_pattern[1][4][6] = 0;	C_pattern[1][4][7] = 1;	C_pattern[1][4][8] = 1;
+
+
+
+
+
+	C_pattern[1][5][0] = 0;	C_pattern[1][5][1] = 1;	C_pattern[1][5][2] = 0;
+	C_pattern[1][5][3] = 0;	C_pattern[1][5][4] = 1;	C_pattern[1][5][5] = 1;
+	C_pattern[1][5][6] = 1;	C_pattern[1][5][7] = 1;	C_pattern[1][5][8] = 0;
+
+
+
+
+
+	C_pattern[1][6][0] = 1;	C_pattern[1][6][1] = 0;	C_pattern[1][6][2] = 0;
+	C_pattern[1][6][3] = 1;	C_pattern[1][6][4] = 1;	C_pattern[1][6][5] = 1;
+	C_pattern[1][6][6] = 0;	C_pattern[1][6][7] = 1;	C_pattern[1][6][8] = 0;
+
+
+
+
+
+	C_pattern[1][7][0] = 0;	C_pattern[1][7][1] = 0;	C_pattern[1][7][2] = 1;
+	C_pattern[1][7][3] = 1;	C_pattern[1][7][4] = 1;	C_pattern[1][7][5] = 1;
+	C_pattern[1][7][6] = 0;	C_pattern[1][7][7] = 1;	C_pattern[1][7][8] = 0;
+
+
+
+
+
+	C_pattern[1][8][0] = 0;	C_pattern[1][8][1] = 1;	C_pattern[1][8][2] = 0;
+	C_pattern[1][8][3] = 1;	C_pattern[1][8][4] = 1;	C_pattern[1][8][5] = 1;
+	C_pattern[1][8][6] = 0;	C_pattern[1][8][7] = 0;	C_pattern[1][8][8] = 1;
+
+
+
+
+
+	C_pattern[1][9][0] = 0;	C_pattern[1][9][1] = 1;	C_pattern[1][9][2] = 0;
+	C_pattern[1][9][3] = 1;	C_pattern[1][9][4] = 1;	C_pattern[1][9][5] = 1;
+	C_pattern[1][9][6] = 1;	C_pattern[1][9][7] = 0;	C_pattern[1][9][8] = 0;
+
+
+
+
+
+	C_pattern[1][10][0] = 1;	C_pattern[1][10][1] = 1;	C_pattern[1][10][2] = 0;
+	C_pattern[1][10][3] = 0;	C_pattern[1][10][4] = 1;	C_pattern[1][10][5] = 1;
+	C_pattern[1][10][6] = 0;	C_pattern[1][10][7] = 1;	C_pattern[1][10][8] = 0;
+
+
+
+
+
+	C_pattern[1][11][0] = 0;	C_pattern[1][11][1] = 1;	C_pattern[1][11][2] = 1;
+	C_pattern[1][11][3] = 1;	C_pattern[1][11][4] = 1;	C_pattern[1][11][5] = 0;
+	C_pattern[1][11][6] = 0;	C_pattern[1][11][7] = 1;	C_pattern[1][11][8] = 0;
+
+
+
+
+
+	C_pattern[1][12][0] = 0;	C_pattern[1][12][1] = 1;	C_pattern[1][12][2] = 0;
+	C_pattern[1][12][3] = 1;	C_pattern[1][12][4] = 1;	C_pattern[1][12][5] = 1;
+	C_pattern[1][12][6] = 0;	C_pattern[1][12][7] = 1;	C_pattern[1][12][8] = 1;
+
+
+
+
+
+	C_pattern[1][13][0] = 0;	C_pattern[1][13][1] = 1;	C_pattern[1][13][2] = 0;
+	C_pattern[1][13][3] = 1;	C_pattern[1][13][4] = 1;	C_pattern[1][13][5] = 1;
+	C_pattern[1][13][6] = 1;	C_pattern[1][13][7] = 1;	C_pattern[1][13][8] = 0;
+
+
+
+
+
+	C_pattern[1][14][0] = 1;	C_pattern[1][14][1] = 1;	C_pattern[1][14][2] = 0;
+	C_pattern[1][14][3] = 1;	C_pattern[1][14][4] = 1;	C_pattern[1][14][5] = 1;
+	C_pattern[1][14][6] = 0;	C_pattern[1][14][7] = 1;	C_pattern[1][14][8] = 0;
+
+
+
+
+
+	C_pattern[1][15][0] = 0;	C_pattern[1][15][1] = 1;	C_pattern[1][15][2] = 1;
+	C_pattern[1][15][3] = 1;	C_pattern[1][15][4] = 1;	C_pattern[1][15][5] = 1;
+	C_pattern[1][15][6] = 0;	C_pattern[1][15][7] = 1;	C_pattern[1][15][8] = 0;
+
+
+
+
+
+	C_pattern[2][0][0] = 1;	C_pattern[2][0][1] = 0;	C_pattern[2][0][2] = 1;
+	C_pattern[2][0][3] = 1;	C_pattern[2][0][4] = 1;	C_pattern[2][0][5] = 0;
+	C_pattern[2][0][6] = 0;	C_pattern[2][0][7] = 1;	C_pattern[2][0][8] = 0;
+
+
+
+
+
+	C_pattern[2][1][0] = 0;	C_pattern[2][1][1] = 1;	C_pattern[2][1][2] = 0;
+	C_pattern[2][1][3] = 1;	C_pattern[2][1][4] = 1;	C_pattern[2][1][5] = 0;
+	C_pattern[2][1][6] = 1;	C_pattern[2][1][7] = 0;	C_pattern[2][1][8] = 1;
+
+
+
+
+
+	C_pattern[2][2][0] = 1;	C_pattern[2][2][1] = 1;	C_pattern[2][2][2] = 0;
+	C_pattern[2][2][3] = 0;	C_pattern[2][2][4] = 1;	C_pattern[2][2][5] = 1;
+	C_pattern[2][2][6] = 1;	C_pattern[2][2][7] = 0;	C_pattern[2][2][8] = 0;
+
+
+
+
+
+	C_pattern[2][3][0] = 0;	C_pattern[2][3][1] = 1;	C_pattern[2][3][2] = 1;
+	C_pattern[2][3][3] = 1;	C_pattern[2][3][4] = 1;	C_pattern[2][3][5] = 0;
+	C_pattern[2][3][6] = 0;	C_pattern[2][3][7] = 0;	C_pattern[2][3][8] = 1;
+
+
+
+
+
+	C_pattern[2][4][0] = 1;	C_pattern[2][4][1] = 0;	C_pattern[2][4][2] = 1;
+	C_pattern[2][4][3] = 0;	C_pattern[2][4][4] = 1;	C_pattern[2][4][5] = 1;
+	C_pattern[2][4][6] = 0;	C_pattern[2][4][7] = 1;	C_pattern[2][4][8] = 0;
+
+
+
+
+
+	C_pattern[2][5][0] = 0;	C_pattern[2][5][1] = 1;	C_pattern[2][5][2] = 0;
+	C_pattern[2][5][3] = 0;	C_pattern[2][5][4] = 1;	C_pattern[2][5][5] = 1;
+	C_pattern[2][5][6] = 1;	C_pattern[2][5][7] = 0;	C_pattern[2][5][8] = 1;
+
+
+
+
+
+	C_pattern[2][6][0] = 1;	C_pattern[2][6][1] = 0;	C_pattern[2][6][2] = 0;
+	C_pattern[2][6][3] = 0;	C_pattern[2][6][4] = 1;	C_pattern[2][6][5] = 1;
+	C_pattern[2][6][6] = 1;	C_pattern[2][6][7] = 1;	C_pattern[2][6][8] = 0;
+
+
+
+
+
+	C_pattern[2][7][0] = 0;	C_pattern[2][7][1] = 0;	C_pattern[2][7][2] = 1;
+	C_pattern[2][7][3] = 1;	C_pattern[2][7][4] = 1;	C_pattern[2][7][5] = 0;
+	C_pattern[2][7][6] = 0;	C_pattern[2][7][7] = 1;	C_pattern[2][7][8] = 1;
+
+
+
+
+
+	C_pattern[2][8][0] = 1;	C_pattern[2][8][1] = 0;	C_pattern[2][8][2] = 1;
+	C_pattern[2][8][3] = 1;	C_pattern[2][8][4] = 1;	C_pattern[2][8][5] = 1;
+	C_pattern[2][8][6] = 0;	C_pattern[2][8][7] = 1;	C_pattern[2][8][8] = 0;
+
+
+
+
+
+	C_pattern[2][9][0] = 0;	C_pattern[2][9][1] = 1;	C_pattern[2][9][2] = 0;
+	C_pattern[2][9][3] = 1;	C_pattern[2][9][4] = 1;	C_pattern[2][9][5] = 1;
+	C_pattern[2][9][6] = 1;	C_pattern[2][9][7] = 0;	C_pattern[2][9][8] = 1;
+
+
+
+
+
+	C_pattern[2][10][0] = 1;	C_pattern[2][10][1] = 1;	C_pattern[2][10][2] = 0;
+	C_pattern[2][10][3] = 0;	C_pattern[2][10][4] = 1;	C_pattern[2][10][5] = 1;
+	C_pattern[2][10][6] = 1;	C_pattern[2][10][7] = 1;	C_pattern[2][10][8] = 0;
+
+
+
+
+
+	C_pattern[2][11][0] = 0;	C_pattern[2][11][1] = 1;	C_pattern[2][11][2] = 1;
+	C_pattern[2][11][3] = 1;	C_pattern[2][11][4] = 1;	C_pattern[2][11][5] = 0;
+	C_pattern[2][11][6] = 0;	C_pattern[2][11][7] = 1;	C_pattern[2][11][8] = 1;
+
+
+
+
+
+	C_pattern[3][0][0] = 1;	C_pattern[3][0][1] = 0;	C_pattern[3][0][2] = 1;
+	C_pattern[3][0][3] = 1;	C_pattern[3][0][4] = 1;	C_pattern[3][0][5] = 1;
+	C_pattern[3][0][6] = 1;	C_pattern[3][0][7] = 0;	C_pattern[3][0][8] = 1;
+
+
+
+
+
+	C_pattern[3][1][0] = 1;	C_pattern[3][1][1] = 1;	C_pattern[3][1][2] = 1;
+	C_pattern[3][1][3] = 0;	C_pattern[3][1][4] = 1;	C_pattern[3][1][5] = 0;
+	C_pattern[3][1][6] = 1;	C_pattern[3][1][7] = 1;	C_pattern[3][1][8] = 1;
+
+
+
+
+
+
+	for(int i = 0; i < C_num.size(); i++)
+	{
+		for(int j = 0; j < C_num[i]; j++)
+		{
+			int counter = 0;
+			for(int k = 0; k < 9; k++)
+				counter += (int)C_pattern[i][j][k] * x_map[k];
+			hash_lut_cross[counter] = 1;
+		}
+	}
+	for(int i = 0; i < C_num.size(); i++)
+	{
+		for(int j = 0; j < C_num[i]; j++)
+		{
+			delete[] C_pattern[i][j];
+		}
+		delete[] C_pattern[i];
+	}
 	return;
 }
 void show_matrix()
@@ -2724,9 +2931,29 @@ void show_M_matrix()
 	}
 	return;
 }
+void show_C_matrix()
+{
+	
+	//for(int i = 0; i < M_num.size(); i++)
+	int i = 3;
+	{
+		fprintf(stderr, "bond: %d\n", i + 1);
+		for(int j = 0; j < C_num[i]; j++)
+		{
+			fprintf(stderr, "%dth\n", j);
+			for(int k = 0; k < 3; k++)
+			{
+				fprintf(stderr, "%u %u %u\n", C_pattern[i][j][3 * k], C_pattern[i][j][3 * k + 1], C_pattern[i][j][3 * k + 2]);
+			}
+			fprintf(stderr, "\n\n\n");
+		}
+	}
+	return;
+}
 void hash_clear()
 {
 	delete[] hash_lut_hit;
 	delete[] hash_lut_M;
 	delete[] hash_lut_bridge;
+	delete[] hash_lut_cross;
 }

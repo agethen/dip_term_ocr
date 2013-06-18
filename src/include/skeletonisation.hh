@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include <cstring>
-
+#include <vector>
 #include "Bitmap.hh"
 
 using namespace std;
@@ -30,6 +30,8 @@ class hit_miss
 		int *bond;
 		int width;
 		int height;
+		
+		vector < vector <int> > clusters;
 	public:
 		/*
 			constructor: put the bitmap image, width, height and bpp; the bitwise of the image
@@ -79,6 +81,18 @@ class hit_miss
 			memory. width and height is to double check.
 		*/
 		void getShrunk(unsigned char*, int w, int h);
+		/*
+			crosser detects the cross section points and return a vector containing the crossing points.
+		*/
+		void crosser();
+		/*
+			check_cross(vector <int>) is to check if the candidates are really cross points. 
+		*/
+		void check_cross(vector <int>);
+		/*
+			iterator(int pos)
+		*/
+		int iter(int pile, int prev, int pos);
 		void exportToBitmap( cBitmap * target );
 };
 #endif
