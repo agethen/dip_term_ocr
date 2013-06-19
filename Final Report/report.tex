@@ -53,7 +53,7 @@ v = \sqrt{r^2 + g^2 + b^2}
 \end{figure}
 
 \subsubsection{Skeletonization}
-After the image is quantized, we repeatedly use the conditional mark pattern and unconditional mark pattern until the nothing is changed. Finally, we use the bridge operation to recover the connectivity of the character. Conditional and unconditional mark patterns for Skeletonization can be found in Fig.~\ref{fig:markpatterns}, while those for the Bridge operation can be found in Fig.~\ref{fig:bridge}.
+After the image is quantized, we repeatedly use the conditional mark pattern and unconditional mark pattern until the nothing is changed. Finally, we use the bridge operation to recover the connectivity of the character. Conditional and unconditional mark patterns for Skeletonization can be found in Fig.~\ref{fig:markpatterns1} to \ref{fig:markpatterns3}, while those for the Bridge operation can be found in Fig.~\ref{fig:bridge}.
 
 The comparison of the skeletonization can be seen in the Fig.~\ref{fig:skeleton}.
 \begin{figure}
@@ -273,17 +273,24 @@ We evaluate our program on the text seen in Figure \ref{fig:input}. The text con
 
 \begin{figure}[ht]
  \includegraphics[width=8cm]{images/demo.png}
- \caption{Input for our evaluation}
+ \caption{Input Bitmap for our evaluation}
  \label{fig:input}
 \end{figure}
 
+\newpage
+
 \begin{lstlisting}[caption={Result of our evaluation},label={lst:output}]
+Detected: 
 ABZDEFDHG2SLNNORORETKXQWYZD5ZB4ZB5BB
+Diff:
   C   G IJK M  PQ S UVWX  0123 56789
+(22 Errors)
 
-
+Detected:
 ANARRLEADAYSEERETHEDOZTORAQAY
-   PP      K  PS     C    W
+Diff:
+   PP      K  PS     C    W  
+(7 Errors)
 \end{lstlisting}
 
 The output of our OCR system can be seen in Listing \ref{lst:output}. From the total of 65 characters, we did not correctly recognize 29, giving an overall error-ratio of 44.6\%.
@@ -300,7 +307,7 @@ Finally, we also note that adjusting the weights is critically important for a g
 
 \section{Division of Labor}
 
-\begin{tabular}{l|l}
+\begin{tabular}{|l|l|}
  \hline
  Sebastian Agethen & Program Framework, Decision Clustering, \\
   & Features: Lakes, Euler number, \\
@@ -308,13 +315,39 @@ Finally, we also note that adjusting the weights is critically important for a g
 \hline
  Lin Sheng-Ching & Extraction of characters, \\
  &  skeletonization of characters\\
-  & geometrical features (Sec.~\ref{sec:geometrical}), orientation \\
+  & geometrical features (Sec.~\ref{sec:geometrical}), \\ & orientation \\
 \hline
  Jeroen Dhondt & Project Proposal, Bays, \\
  & Presentation/Final Report: Introduction, \\
  & Motivation, Conclusion\\
 \hline
 \end{tabular}
+
+
+\begin{figure*}
+ \includegraphics{images/bridge.pdf}
+ \caption{Conditions for Bridging a Pixel, taken from \cite{Pratt:2001:DIP:516234}, p. 406}
+ \label{fig:bridge}
+\end{figure*}
+
+\begin{figure*}
+ \includegraphics[page=1,height=19cm]{images/patternTables.pdf}
+ \caption{Unconditional and Conditional Mark Patterns (part 1), taken from \cite{Pratt:2001:DIP:516234}, p. 413}
+ \label{fig:markpatterns1}
+\end{figure*}
+
+\begin{figure*}
+ \includegraphics[page=2,height=19cm]{images/patternTables.pdf}
+ \caption{Unconditional and Conditional Mark Patterns (part 2), taken from \cite{Pratt:2001:DIP:516234}, p. 414}
+ \label{fig:markpatterns2}
+\end{figure*}
+
+\begin{figure*}
+ \includegraphics[page=3,height=19cm]{images/patternTables.pdf}
+ \caption{Unconditional and Conditional Mark Patterns (part 3), taken from \cite{Pratt:2001:DIP:516234}, p. 415}
+ \label{fig:markpatterns3}
+\end{figure*}
+
 
 \bibliography{report}
 \bibliographystyle{plain}
