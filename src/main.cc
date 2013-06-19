@@ -98,6 +98,11 @@ int main( int argc, char ** argv ){
 
  }
 
+ #ifdef linux
+ struct timeval start,end;
+ gettimeofday( &start, NULL );
+ #endif
+
  vector<Segment> segments;
  vector< pair<vector<double>,int> > datapoints;
  vector< vector<double*> > shapes;
@@ -222,11 +227,22 @@ int main( int argc, char ** argv ){
  //Do clustering
  simpleRecognizeCharacter( datapoints, centroids, weights, hist_database, shapes, shape_weight );
 
+ #ifdef linux
+ gettimeofday( &end, NULL );
+
+ struct timeval diff;
+ timersub( &end, &start, &diff );
+ #endif
+
  //Print result ;)
  //For demo purposes, actual string here:
  //char actual[256] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
  //printClusteringResult( datapoints, centroids, actual );
  printClusteringResult( datapoints, centroids );
+
+ #ifdef linux
+ cout << "Required time was: " << diff.tv_sec << "s " << diff.tv_usec << "ms" << endl;
+ #endif
  return 0;
 }

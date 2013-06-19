@@ -23,6 +23,9 @@
 
 #include "../Preprocessing/resize.hh"
 
+#ifdef linux
+#include <sys/time.h>
+#endif
 
 #ifdef __MACOS__
 #include <GLUT/glut.h>
