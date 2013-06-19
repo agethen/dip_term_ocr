@@ -9,6 +9,11 @@
 \usepackage{graphicx}
 \usepackage{breqn}
 
+\lstset{ %
+ basicstyle=\small,
+ breaklines=true,
+ }
+
 \begin{document}
 \title{Solving Captchas with an OCR system}
 \author{Sebastian Agethen, D01944015 \\ Lin Sheng-Ching, R99222030 \\ Jeroen Dhondt, A01922201 }
@@ -31,11 +36,11 @@ Our OCR system runs in two stages, a training phase and a live phase. In the tra
 \subsection{Preprocessing}
 
 \subsubsection{Quantization}
-\begin{itemize}
-\item Set a threshold $t$
-\item $v = \sqrt{r^2 + g^2 + b^2}$
-\item If $v < t$, set the pixel $p = 0$; if $v \geq t$, set the pixel $p = 1$.
-\end{itemize}
+For our quantization, we first set a threshold value t, and then evaluate the Eq.~\ref{eq:threshold}. If the term $v < t$, then we set the pixel $p = 0$, otherwise if $v \geq t$, we set the pixel $p = 1$.
+\begin{equation}
+v = \sqrt{r^2 + g^2 + b^2}
+\label{eq:threshold}
+\end{equation}
 
 \begin{figure}
 \subfigure[Original B]{
@@ -48,12 +53,9 @@ Our OCR system runs in two stages, a training phase and a live phase. In the tra
 \end{figure}
 
 \subsubsection{Skeletonization}
-\begin{itemize}
-\item Use the result of quantization
-\item Repeatedly use the conditional mark pattern and unconditional mark pattern until the nothing is changed
-\item Use the bridge operation to recover the connectivity
-\end{itemize}
+After the image is quantized, we repeatedly use the conditional mark pattern and unconditional mark pattern until the nothing is changed. Finally, we use the bridge operation to recover the connectivity of the character. Conditional and unconditional mark patterns for Skeletonization can be found in Fig.~\ref{fig:markpatterns}, while those for the Bridge operation can be found in Fig.~\ref{fig:bridge}.
 
+The comparison of the skeletonization can be seen in the Fig.~\ref{fig:skeleton}.
 \begin{figure}
 \subfigure[Quantised B]{
 \includegraphics[width=0.5\textwidth]{images/quantised_B.pdf}
@@ -61,24 +63,25 @@ Our OCR system runs in two stages, a training phase and a live phase. In the tra
 \subfigure[Skeletonized B]{
 \includegraphics[width=0.5\textwidth]{images/skeletonized_B.pdf}
 }
-\caption{Qunatized B v.s. Skeletonized B}
+\caption{Qunatized B v.s. Skeletonized B}\label{fig:skeleton}
 \end{figure}
 
 \subsubsection{Boundary extraction}
-\begin{itemize}
-\item Scan the pixel from left to right for each row.
-\item When the gradient changes strictly, set the row number as the ceiling of the sentence.
-\item After finding the ceiling, keep scanning the pixels. If we find a totally white row, set the row number - 1 as the bottom of the sentence.
-\item Scan the pixels of each column from the ceiling to the bottom.
-\item When the gradient changes strictly, set the column number as the left boundary of the sentence.
-\item After finding the left boundary, scan the pixels from the rightmost pixel to the left, from ceiling to the bottom. As we find a strict gradient of the column, set it as the right boundary.
-\item Keep doing the steps 1 ~ 6 until all the input file is scanned.
-\item For each sentence, set the left boundary as the left boundary of the first chacter and scan the pixel from ceiling to the bottom, starting from the left.
-\item If there is a column totally white, set the column number -1 as the right boundary of the chacter.
-\item Keep scanning until a strict gradient occurs. Set the column number as the left boundary of the next chacter.
-\item Keep scanning until another strict gradient column is found and the right boundary of the chacter is set.
-\item Repeat step 9 ~ 11 until the sentence is totally scanned and scan the next sentence.
-\end{itemize}
+The algorithm to extract the boundary of character can be seen in the listing~\ref{lst:boundary}.
+\begin{lstlisting}[caption={Boundary Extraction algorithm},label={lst:boundary}]
+1. Scan the pixel from left to right for each row.
+2. When the gradient changes strictly, set the row number as the ceiling of the sentence.
+3. After finding the ceiling, keep scanning the pixels. If we find a totally white row, set the row number - 1 as the bottom of the sentence.
+4. Scan the pixels of each column from the ceiling to the bottom.
+5. When the gradient changes strictly, set the column number as the left boundary of the sentence.
+6. After finding the left boundary, scan the pixels from the rightmost pixel to the left, from ceiling to the bottom. As we find a strict gradient of the column, set it as the right boundary.
+7. Keep doing the steps 1 ~ 6 until all the input file is scanned.
+8. For each sentence, set the left boundary as the left boundary of the first chacter and scan the pixel from ceiling to the bottom, starting from the left.
+9. If there is a column totally white, set the column number -1 as the right boundary of the chacter.
+10. Keep scanning until a strict gradient occurs. Set the column number as the left boundary of the next chacter.
+11. Keep scanning until another strict gradient column is found and the right boundary of the chacter is set.
+12. Repeat step 9 ~ 11 until the sentence is totally scanned and scan the next sentence.
+\end{lstlisting}
 
 \subsubsection{Orientation}
 
@@ -89,7 +92,7 @@ M(m,n)=\frac{1}{J^n K^m}\sum_{j=1}^J\sum_{k=1}^K (x_k)^m (y_j)^n F(j,k)
 \end{multline}
 where $x_k=k-\frac{1}{2}, y_j=J+\frac{1}{2}-j$ and
 \begin{multline}
-U(m,n)=\frac{1}{J^n K^m}\sum_{j=1}^J\sum_{k=1}^K \left(x_k-\frac{M(1,0)}{M(0,0)}\right)^m \\ \left(y_j-\frac{M(0,1)}{M(0,0)}\right)^n F(j,k)
+U(m,n)= \\ \frac{1}{J^n K^m}\sum_{j=1}^J\sum_{k=1}^K \left(x_k-\frac{M(1,0)}{M(0,0)}\right)^m  \left(y_j-\frac{M(0,1)}{M(0,0)}\right)^n F(j,k)
 \end{multline}
 where $x_k=k-\frac{1}{2}, y_j=J+\frac{1}{2}-j$ and then find the maximum value of eigen value
 
@@ -143,8 +146,9 @@ where $B$ is the set of black pixels and $C$ is the Convex Hull. An example can 
 In the following we present each feature we used in detail.
 
 \subsubsection{Geometrical features}
+\label{sec:geometrical}
 %Area, weight center, diameter, etc
-
+Our geometical features consist of area, weight center, average and maximum distance from weight center.
 \paragraph{Area}
 Calculate the total number of pixels
 
@@ -261,9 +265,56 @@ We then choose the vectors found in our training phase to be the cluster centroi
 
 \section{Experimental Results}
 
+We evaluate our program on the text seen in Figure \ref{fig:input}. The text contain Capitals form the English alphabet as well as the digits 0 to 9.
+%\begin{lstlisting}[caption={Input for our evaluation},label={lst:input}]
+%ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+%AN APPLE A DAY KEEPS THE DOCTOR AWAY
+%\end{lstlisting}
+
+\begin{figure}[ht]
+ \includegraphics[width=8cm]{images/demo.png}
+ \caption{Input for our evaluation}
+ \label{fig:input}
+\end{figure}
+
+\begin{lstlisting}[caption={Result of our evaluation},label={lst:output}]
+ABZDEFDHG2SLNNORORETKXQWYZD5ZB4ZB5BB
+  C   G IJK M  PQ S UVWX  0123 56789
+
+
+ANARRLEADAYSEERETHEDOZTORAQAY
+   PP      K  PS     C    W
+\end{lstlisting}
+
+The output of our OCR system can be seen in Listing \ref{lst:output}. From the total of 65 characters, we did not correctly recognize 29, giving an overall error-ratio of 44.6\%.
+We notice that with our current features, the recognition is far better for alphabetical characters than for numbers. From ten digits only one was correctly identified (Error ratio: 90\%), while of the 55 alphabetical characters 35 were correctly identified (Error ratio: 36.3\%). 
+
+\subsection{Discussion}
+We now discuss the known flaws of our system leading to the low recognition rate seen above. First of all, some of the features are not well implemented resulting in incorrect values, e.g., our Number of Bays feature. The problem here is that during the computation of the Convex Hull some pixels are falsely included. These pixels then form small Bays that distort our results.
+
+Another problem we met can be revealed from closer study of Fig.~\ref{fig:input}: Notice that the spacing between each character is quite wide. If this is not the case, it may happen that two characters are joined during segmentation. One problem is that characters may overlap, another one is the quantization. Characters in the bitmap are not necessarily black-and-white, but diffuse. It is therefore important to find a good Quantization threshold: Is the threshold too high, characters maybe joined due to diffusion. Is the threshold too low, some characters might be split up, especially for small font sizes.
+
+Finally, we also note that adjusting the weights is critically important for a good result. This issue is a keypoint for any Future Work on this project.
+
 \section{Conclusion}
 
 \section{Division of Labor}
+
+\begin{tabular}{l|l}
+ \hline
+ Sebastian Agethen & Program Framework, Decision Clustering, \\
+  & Features: Lakes, Euler number, \\
+ & Lines and Circles, Shape Coefficient\\
+\hline
+ Lin Sheng-Ching & Extraction of characters, \\
+ &  skeletonization of characters\\
+  & geometrical features (Sec.~\ref{sec:geometrical}), orientation \\
+\hline
+ Jeroen Dhondt & Project Proposal, Bays, \\
+ & Presentation/Final Report: Introduction, \\
+ & Motivation, Conclusion\\
+\hline
+\end{tabular}
 
 \bibliography{report}
 \bibliographystyle{plain}
