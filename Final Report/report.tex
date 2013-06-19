@@ -8,7 +8,7 @@
 
 \usepackage{graphicx}
 \usepackage{breqn}
-
+\usepackage{float}
 \lstset{ %
  basicstyle=\small,
  breaklines=true,
@@ -27,6 +27,33 @@
 \twocolumn
 
 \section{Introduction}
+\label{sec:intro}
+
+Optical Character Recognition (OCR) has been around for quite some time as a research field in Image Processing. We found this idea interesting, and thus decided to base our project around OCR. As a new idea and modern application of this topic, we choose to try and solve Captchas. In this introduction we will first introduce the concept of Captchas as well as their motivation and modern day uses, an introduction to the topic of OCR is presented and followed by our motivation to start this project. In Section 2 we go in depth over our implementation, covering all different aspects in detail. Next, in Section 3 we've summed up our results followed by a discussion. Our conclusions are presented in Section 4, and the work division is covered in the final Section 5.
+
+\subsection{Optical Character Recognition}
+To start this introduction, we give more insight in the process called OCR. OCR is a term used to discribe computer applications that have as goal to recognize characters from a (digital) image. As such, these applications have a collection of image processing steps and decision making algorithms that together make it possible to find and correctly identify characters in an image. An example can be seen in Figure ~\ref{fig:OCRex}. Traditionally, the most common application of OCR nowadays was digitazing paper resources, for instance old books in libraries or old files in companies. But nowadays a whole new array of applications has risen. Most noteworthy is the extraction of information from images and even video, for instance recognizing license plates on a traffic video feed or analyzing pictures taken Google Maps to recognize traffic signs, house numbers and others.
+
+\begin{figure} [H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{images/OCRex.png}
+	\caption{Example of OCR}\label{fig:OCRex}
+\end{figure}
+
+\subsection{Captchas}
+For our project, we decided to analyze captchas, and ultimately try to solve ('crack') these puzzels. Captchas were invented to solve the problem of so-called 'crawlers' or 'bots' that are found on the web. These automatic programs typically try to spam a website or forum with advertisements or do other unwanted actions. To stop these, captchas were introduced: they are a test to users to prove they are human. These captchas are images with characters hidden in them, in a way that they can be read by humans but are hard to distinguish by a computer. Some examples are shown in Figure \ref{fig:captchas}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{images/captchas.png}
+	\caption{Different captchas}\label{fig:captchas}
+\end{figure}
+ 
+\subsection{Motivation}
+The motivation for our project is to implement an application that can solve captchas, presented as an image file. To get this result, we will need to implement two parts. First, a preprocessing of the captcha will be done. Any distorted elements that obstruct the OCR application from recognizing the characters, must be removed. The second and most important part will be the OCR application. Our application must be able to recognize characters found in a given bitmap input image. Due to time constraints, we have only implemented OCR and let the preprocessing of captchas as future work.
+
+\newpage
+
 \section{Implementation}
 We first introduce the structure of our system. In the following sections we then present each step in greater detail.
 
